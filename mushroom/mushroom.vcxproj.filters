@@ -15,19 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="targetver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="easyx.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="mushroom.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\easyx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\graphics.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
