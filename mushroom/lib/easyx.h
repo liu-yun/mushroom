@@ -21,13 +21,7 @@
 #endif
 
 #if defined(UNICODE) && (_MSC_VER > 1200)
-#pragma comment(lib,"easyxw.lib")
-#elif !defined(UNICODE) && (_MSC_VER > 1200)
-#pragma comment(lib,"easyx.lib")
-#elif defined(UNICODE)
-#pragma comment(lib,"easyxw6.lib")
-#elif !defined(UNICODE)
-#pragma comment(lib,"easyx6.lib")
+#pragma comment(lib,"lib/easyxw.lib")
 #endif
 
 

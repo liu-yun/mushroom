@@ -38,4 +38,18 @@
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="mushroom.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\Yun\Desktop\res\data.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\Yun\Desktop\data.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\ui.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
