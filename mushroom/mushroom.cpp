@@ -2,7 +2,7 @@
 
 int main() {
     IMAGE images[2];
-    HDC hdc[4];
+    HDC hdc[3];
     InitScene(images, hdc);
     GameMain(hdc);
 }
@@ -46,8 +46,6 @@ void InitScene(IMAGE *images, HDC hdc[]) {
     hdc[0] = GetImageHDC();
     hdc[1] = GetImageHDC(images);
     hdc[2] = GetImageHDC(images + 1);
-    hdc[3] = CreateCompatibleDC(nullptr);//cache
-    CreateCompatibleBitmap(hdc[3], 800, 600);
     SetTextColor(hdc[0], BLACK);
     SetBkMode(hdc[0], TRANSPARENT);
     SetTextAlign(hdc[0], TA_CENTER);
@@ -85,22 +83,9 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
     const int kY[] = { 81,243,405 };
     wchar_t buffer[10];
 
-    static clock_t old_clock = clock();
-    if (clock() - old_clock < 5) {
-        return;
-    }
-    old_clock = clock();
-
     BeginBatchDraw();
     //draw background
     BitBlt(hdc[0], 0, 0, 800, 600, hdc[2], 0, 0, SRCCOPY);
-
-    //draw score, time (if needed)
-    OutputText(hdc[0], kTexts[0], game.player_name);//outtextxy(texts[0][0], texts[0][1], game.player_name);
-    _itow_s(game.score, buffer, 10);
-    OutputText(hdc[0], kTexts[1], buffer);
-    _itow_s(game.time_left, buffer, 10);
-    OutputText(hdc[0], kTexts[2], buffer);
 
     //draw mushrooms scores
     GrassNode *p = game.h->next;
@@ -127,6 +112,12 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
         p = p->next;
     }
 
+    //draw score, time (if needed)
+    OutputText(hdc[0], kTexts[0], game.player_name); //outtextxy(texts[0][0], texts[0][1], game.player_name);
+    _itow_s(game.score, buffer, 10);
+    OutputText(hdc[0], kTexts[1], buffer);
+    _itow_s(game.time_left, buffer, 10);
+    OutputText(hdc[0], kTexts[2], buffer);
     //draw player
     Transparent(hdc[0], player.x, player.y, hdc[1], kPlayer[player.direction]);
     //draw buttons
