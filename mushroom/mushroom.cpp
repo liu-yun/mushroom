@@ -1,10 +1,11 @@
 ﻿#include "mushroom.h"
 
-int main() {
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     IMAGE images[2];
     HDC hdc[3];
     InitScene(images, hdc);
     GameMain(hdc);
+    return 0;
 }
 
 void GameMain(HDC hdc[]) {
@@ -27,7 +28,7 @@ void GameMain(HDC hdc[]) {
 }
 
 void InitScene(IMAGE *images, HDC hdc[]) {
-    initgraph(800, 600);
+    initgraph(kWidth, kHeight);
     SetWindowText(GetHWnd(), L"采蘑菇");
     //Fix the blurry taskbar icon.
     HICON icon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_MUSHROOM));
@@ -55,30 +56,28 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
     //Buttons:Start, Save, Clear, Quit
     const int kButtons[4][4] = { {55,542,64,64},{135,542,64,64},{215,542,64,64},{295,542,64,64} };//X, Y, W, H
     //Info:Player name, Score, Time
-    const int kTexts[3][2] = { {433,537},{573,537},{715,537} };//Center X, Y
-    const int kPlayer[4][4] = {
-    { 1,1,32,32 },
-    { 34,1,32,32 },
-    { 67,1,32,32 },
-    { 100,1,32,32 }
-    };
-    const int kMushrooms[9][4] = { 133,1,93,80 ,
-     227,1,89,83 ,
-     317,1,77,86 ,
-     395,1,78,90 ,
-     474,1,64,90 ,
-     539,1,94,90 ,
-     634,1,43,90 ,
-     678,1,101,90 ,
-     1,92,65,90 };
-    const int kGrass[3][4] = { { 506,92,108,140 },
-    { 615,92,187,140 },
-    { 325,92,180,140 } };
-    const int kGrassHighlight[3][4] = { { 506,92,108,140 },
-    { 615,92,187,140 },
-    { 325,92,180,140 } };
-    const int kBomb[2][4] = { { 67,92,145,100 },
-    { 213,92,111,103 } };
+    const int kTexts[3][2] = { {433,537},{573,537},{715,537} };//Center point X, Y
+    const int kPlayer[4][4] = { { 461,424,32,32 },
+    { 494,424,32,32 },
+    { 1,515,32,32 },
+    { 34,515,32,32 } };
+    const int kMushrooms[9][4] = { { 291,283,64,90 },
+    { 356,283,65,90 },
+    { 422,283,43,90 },
+    { 466,283,77,86 },
+    { 1,424,89,83 },
+    { 91,424,94,90 },
+    { 186,424,93,80 },
+    { 280,424,101,90 },
+    { 382,424,78,90 } };
+    const int kGrass[3][4] = { { 259,1,187,140 },
+    { 1,142,108,140 },
+    { 110,142,180,140 } };
+    const int kGrassHighlight[3][4] = { { 291,142,187,140 },
+    { 1,283,108,140 },
+    { 110,283,180,140 } };
+    const int kBomb[2][4] = { { 1,1,145,100 },
+    { 147,1,111,103 } };
     const int kX[] = { 100,300,500,700 };
     const int kY[] = { 81,243,405 };
     wchar_t buffer[10];
@@ -169,8 +168,7 @@ void GetAndDispatchCommand(Game &game, Player &player) {
             case WM_LBUTTONUP:
                 switch (game.button_focus) {
                     case 0:
-                        MessageBox(GetHWnd(), L"START", L"", 0);
-                        game.paused = false;
+                        game.paused = !game.paused;
                         break;
                     case 1:
                         SaveGameToFile(game, player);
@@ -436,8 +434,8 @@ GrassNode::GrassNode(int i) : id(i) {
 int GrassNode::grid[3][4] = { 0 };
 
 Player::Player() {
-    x = 400 - 16;
-    y = 490 - 16 - 1;
+    x = kWidth / 2 - 16;
+    y = kBottom - 16 - 1;
     speed = 2;
     direction = UP;
     dx = 0;
@@ -445,14 +443,14 @@ Player::Player() {
 }
 
 void Player::Move() {
-    if (x <= 16 || y <= 16 || x >= 800 - 16 || y >= 490 - 16) {
+    if (x <= 16 || y <= 16 || x >= kWidth - 16 || y >= kBottom - 16) {
         dx = -dx;
         dy = -dy;
         direction += direction > 1 ? -2 : 2;
         x = x <= 16 ? 16 + 1 : x;
         y = y <= 16 ? 16 + 1 : y;
-        x = x >= 800 - 16 ? 800 - 16 - 1 : x;
-        y = y >= 490 - 16 ? 490 - 16 - 1 : y;
+        x = x >= kWidth - 16 ? kWidth - 16 - 1 : x;
+        y = y >= kBottom - 16 ? kBottom - 16 - 1 : y;
         /*if (x <= 16)
             x = 16 + 1;
         if (y <= 16)

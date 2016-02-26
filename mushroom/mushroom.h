@@ -15,6 +15,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "lib/graphics.h"
 #include "resource.h"
 
+const int kWidth = 800;
+const int kHeight = 600;
+const int kBottom = 490;
 enum Direction { LEFT, UP, RIGHT, DOWN };
 enum Grass { MUSHROOM, BOMB, NOTHING };
 
