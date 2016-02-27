@@ -143,17 +143,18 @@ void GetGameData(Game &game, Player &player) {
 void GetAndDispatchCommand(Game &game, Player &player) {
     const HCURSOR arrow = LoadCursor(nullptr, IDC_ARROW);
     const HCURSOR hand = LoadCursor(nullptr, IDC_HAND);
-    if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+    if (GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState(65) & 0x8000)
         player.SetDirection(LEFT);
-    if (GetAsyncKeyState(VK_UP) & 0x8000)
+    if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(87) & 0x8000)
         player.SetDirection(UP);
-    if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+    if (GetAsyncKeyState(VK_RIGHT) & 0x8000 || GetAsyncKeyState(68) & 0x8000)
         player.SetDirection(RIGHT);
-    if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+    if (GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(83) & 0x8000)
         player.SetDirection(DOWN);
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
         game.PickMushroom();
-    }
+    if (GetAsyncKeyState(VK_RETURN) & 0x8000)
+        game.paused = !game.paused;
     MOUSEMSG message;
     if (MouseHit()) {
         message = GetMouseMsg();
