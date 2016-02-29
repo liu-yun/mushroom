@@ -151,7 +151,11 @@
     <ClInclude Include="mushroom.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mushroom.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="grass_node.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="winapi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="mushroom.rc" />

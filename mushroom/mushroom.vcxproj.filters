@@ -29,7 +29,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mushroom.cpp">
+    <ClCompile Include="game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="winapi.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="grass_node.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

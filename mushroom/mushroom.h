@@ -18,6 +18,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 const int kWidth = 800;
 const int kHeight = 600;
 const int kBottom = 490;
+const int kPlayerSize = 16;
+const wchar_t kMushroom[] = L"采蘑菇";
 enum Direction { LEFT, UP, RIGHT, DOWN };
 enum Grass { MUSHROOM, BOMB, NOTHING };
 
@@ -89,29 +91,29 @@ inline int Transparent(HDC hdc, int x, int y, HDC hdcsrc, const int src[]) {
     return GdiTransparentBlt(hdc, x - src[2] / 2, y - src[3] / 2, src[2], src[3], hdcsrc, src[0], src[1], src[2], src[3], 0x0);
 }
 inline int OutputText(HDC hdc, const int t[], wchar_t str[]) {
-    return ExtTextOut(hdc, t[0], t[1], 0, 0, str, wcslen(str), 0);
+    return ExtTextOut(hdc, t[0], t[1], 0, nullptr, str, wcslen(str), 0);
 }
 inline int OutputText(HDC hdc,  int x, int y, wchar_t str[]) {
-    return ExtTextOut(hdc, x, y, 0, 0, str, wcslen(str), 0);
+    return ExtTextOut(hdc, x, y, 0, nullptr, str, wcslen(str), 0);
 }
 inline int ErrorBox(const wchar_t str[]) {
-    return MessageBox(GetHWnd(), str, L"采蘑菇", MB_ICONERROR | MB_OK | MB_DEFBUTTON1);
+    return MessageBox(GetHWnd(), str, kMushroom, MB_ICONERROR | MB_OK | MB_DEFBUTTON1);
 }
 inline int InfoBox(const wchar_t str[]) {
-    return MessageBox(GetHWnd(), str, L"采蘑菇", MB_ICONINFORMATION | MB_OK | MB_DEFBUTTON1);
+    return MessageBox(GetHWnd(), str, kMushroom, MB_ICONINFORMATION | MB_OK | MB_DEFBUTTON1);
 }
 inline int YesNoBox(const wchar_t str[]) {
-    return MessageBox(GetHWnd(), str, L"采蘑菇", MB_ICONINFORMATION | MB_YESNO | MB_DEFBUTTON1);
+    return MessageBox(GetHWnd(), str, kMushroom, MB_ICONINFORMATION | MB_YESNO | MB_DEFBUTTON1);
 }
 inline int YesNoCancelBox(const wchar_t str[]) {
-    return MessageBox(GetHWnd(), str, L"采蘑菇", MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1);
+    return MessageBox(GetHWnd(), str, kMushroom, MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1);
 }
  
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 bool OnInitInputDialog(HWND hWnd, HWND hWndFocus, LPARAM lParam);
 FILE *GetFilePtr(int mode);
-wchar_t temp_name[10]; int temp_num[5];
+extern wchar_t temp_name[10]; extern int temp_num[5];
 
 void GameMain(HDC hdc[]);
 
