@@ -53,31 +53,37 @@ void InitScene(IMAGE *images, HDC hdc[]) {
 }
 
 void DrawGraphic(HDC hdc[], Game &game, Player &player) {
-    //Buttons:Start, Save, Clear, Quit
-    const int kButtons[4][4] = { {55,542,64,64},{135,542,64,64},{215,542,64,64},{295,542,64,64} };//X, Y, W, H
-    //Info:Player name, Score, Time
-    const int kTexts[3][2] = { {433,537},{573,537},{715,537} };//Center point X, Y
-    const int kPlayer[4][4] = { { 461,424,32,32 },
-    { 494,424,32,32 },
-    { 1,515,32,32 },
-    { 34,515,32,32 } };
-    const int kMushrooms[9][4] = { { 291,283,64,90 },
-    { 356,283,65,90 },
-    { 422,283,43,90 },
-    { 466,283,77,86 },
-    { 1,424,89,83 },
-    { 91,424,94,90 },
-    { 186,424,93,80 },
-    { 280,424,101,90 },
-    { 382,424,78,90 } };
-    const int kGrass[3][4] = { { 259,1,187,140 },
-    { 1,142,108,140 },
-    { 110,142,180,140 } };
-    const int kGrassHighlight[3][4] = { { 291,142,187,140 },
-    { 1,283,108,140 },
-    { 110,283,180,140 } };
-    const int kBomb[2][4] = { { 1,1,145,100 },
-    { 147,1,111,103 } };
+    //Info:Player name, Score, Time Center point X, Y
+    const int kTextsXY[3][2] = { {433,537},{573,537},{715,537} };
+    //Buttons:Start, Save, Clear, Quit X, Y
+    const int kButtonsXY[4][2] = { { 15,505 },{ 95,505 },{ 175,505 },{ 255,505 } };
+    const int kButtons[6][4] = { { 1,1,80,82 },
+    { 82,1,80,82 },
+    { 163,1,80,82 },
+    { 244,1,80,82 },
+    { 325,1,80,82 },
+    { 406,1,80,82 } };
+    const int kPlayer[4][4] = { { 371,507,32,32 },
+    { 404,507,32,32 },
+    { 437,507,32,32 },
+    { 470,507,32,32 } };
+    const int kMushrooms[9][4] = { { 182,366,64,90 },
+    { 247,366,65,90 },
+    { 313,366,43,90 },
+    { 357,366,77,86 },
+    { 435,366,89,83 },
+    { 1,507,94,90 },
+    { 96,507,93,80 },
+    { 190,507,101,90 },
+    { 292,507,78,90 } };
+    const int kGrass[3][4] = { { 259,84,187,140 },
+    { 447,84,108,140 },
+    { 1,225,180,140 } };
+    const int kGrassHighlight[3][4] = { { 182,225,187,140 },
+    { 370,225,108,140 },
+    { 1,366,180,140 } };
+    const int kBomb[2][4] = { { 1,84,145,100 },
+    { 147,84,111,103 } };
     const int kX[] = { 100,300,500,700 };
     const int kY[] = { 81,243,405 };
     wchar_t buffer[10];
@@ -111,15 +117,23 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
         p = p->next;
     }
 
-    //draw score, time (if needed)
-    OutputText(hdc[0], kTexts[0], game.player_name); //outtextxy(texts[0][0], texts[0][1], game.player_name);
+    //draw score, time
+    OutputText(hdc[0], kTextsXY[0], game.player_name);
     _itow_s(game.score, buffer, 10);
-    OutputText(hdc[0], kTexts[1], buffer);
+    OutputText(hdc[0], kTextsXY[1], buffer);
     _itow_s(game.time_left, buffer, 10);
-    OutputText(hdc[0], kTexts[2], buffer);
+    OutputText(hdc[0], kTextsXY[2], buffer);
     //draw player
     Transparent(hdc[0], player.x, player.y, hdc[1], kPlayer[player.direction]);
     //draw buttons
+    if (!game.paused)
+        PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[5]); //Pause
+    if (game.button_focus && game.button_on_click)
+        PutImage(hdc[0], kButtonsXY[game.button_focus], hdc[1], kButtons[game.button_focus]);
+    if (game.button_focus == 0 && game.button_on_click && game.paused)
+        PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[4]); //Start on click
+    if (game.button_focus == 0 && game.button_on_click && !game.paused)
+        PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[0]); //Pause on click
     EndBatchDraw();
 
     //Transparent(hdc[2], player.x, player.y, hdc[0], im[player.direction][2], im[player.direction][3], im[player.direction][0], im[player.direction][1]);
@@ -162,12 +176,15 @@ void GetAndDispatchCommand(Game &game, Player &player) {
         switch (message.uMsg) {
             case WM_MOUSEMOVE:
                 game.button_focus = GetButtonFocus(message.x, message.y);
+                if (game.button_focus == -1)
+                    game.button_on_click = false;
                 SetClassLong(GetHWnd(), GCL_HCURSOR, game.button_focus != -1 ? (long)hand : (long)arrow);
                 break;
             case WM_LBUTTONDOWN:
                 game.button_on_click = game.button_focus != -1 ? true : false;
                 break;
             case WM_LBUTTONUP:
+                game.button_on_click = false;
                 switch (game.button_focus) {
                     case 0:
                         game.paused = !game.paused;

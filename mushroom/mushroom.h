@@ -84,6 +84,9 @@ public:
     void SetDirection(Direction d);
 };
 
+inline int PutImage(HDC hdc, const int xy[], HDC hdcsrc, const int src[]) {
+    return BitBlt(hdc, xy[0], xy[1], src[2], src[3], hdcsrc, src[0], src[1], SRCCOPY);
+}
 inline int Transparent(HDC hdc, int x, int y, HDC hdcsrc, int w, int h, int xsrc, int ysrc) {
     return GdiTransparentBlt(hdc, x - w / 2, y - h / 2, w, h, hdcsrc, xsrc, ysrc, w, h, 0x0);
 }
