@@ -57,33 +57,33 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
     const int kTextsXY[3][2] = { {433,537},{573,537},{715,537} };
     //Buttons:Start, Save, Clear, Quit X, Y
     const int kButtonsXY[4][2] = { { 15,505 },{ 95,505 },{ 175,505 },{ 255,505 } };
-    const int kButtons[6][4] = { { 1,1,80,82 },
-    { 82,1,80,82 },
-    { 163,1,80,82 },
-    { 244,1,80,82 },
-    { 325,1,80,82 },
-    { 406,1,80,82 } };
-    const int kPlayer[4][4] = { { 371,507,32,32 },
-    { 404,507,32,32 },
-    { 437,507,32,32 },
-    { 470,507,32,32 } };
-    const int kMushrooms[9][4] = { { 182,366,64,90 },
-    { 247,366,65,90 },
-    { 313,366,43,90 },
-    { 357,366,77,86 },
-    { 435,366,89,83 },
-    { 1,507,94,90 },
-    { 96,507,93,80 },
-    { 190,507,101,90 },
-    { 292,507,78,90 } };
-    const int kGrass[3][4] = { { 259,84,187,140 },
-    { 447,84,108,140 },
-    { 1,225,180,140 } };
-    const int kGrassHighlight[3][4] = { { 182,225,187,140 },
-    { 370,225,108,140 },
-    { 1,366,180,140 } };
-    const int kBomb[2][4] = { { 1,84,145,100 },
-    { 147,84,111,103 } };
+    const int kButtons[6][4] = { { 227,1,80,82 },
+    { 632,1,80,82 },
+    { 389,1,80,82 },
+    { 470,1,80,82 },
+    { 308,1,80,82 },
+    { 551,1,80,82 } };
+    const int kPlayer[4][4] = { { 1,1,32,32 },
+    { 34,1,32,32 },
+    { 67,1,32,32 },
+    { 100,1,32,32 } };
+    const int kMushrooms[9][4] = { { 1,92,64,90 },
+    { 1201,1,65,90 },
+    { 1157,1,43,90 },
+    { 803,1,77,86 },
+    { 713,1,89,83 },
+    { 881,1,94,90 },
+    { 133,1,93,80 },
+    { 1055,1,101,90 },
+    { 976,1,78,90 } };
+    const int kGrass[3][4] = { { 324,92,187,140 },
+    { 693,92,108,140 },
+    { 1099,92,180,140 } };
+    const int kGrassHighlight[3][4] = { { 802,92,187,140 },
+    { 990,92,108,140 },
+    { 512,92,180,140 } };
+    const int kBomb[2][4] = { { 66,92,145,100 },
+    { 212,92,111,103 } };
     const int kX[] = { 100,300,500,700 };
     const int kY[] = { 81,243,405 };
     wchar_t buffer[10];
@@ -128,12 +128,10 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
     //draw buttons
     if (!game.paused)
         PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[5]); //Pause
-    if (game.button_focus && game.button_on_click)
+    if (game.button_on_click)
         PutImage(hdc[0], kButtonsXY[game.button_focus], hdc[1], kButtons[game.button_focus]);
-    if (game.button_focus == 0 && game.button_on_click && game.paused)
+    if (game.paused && game.button_on_click && game.button_focus == 0)
         PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[4]); //Start on click
-    if (game.button_focus == 0 && game.button_on_click && !game.paused)
-        PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[0]); //Pause on click
     EndBatchDraw();
 
     //Transparent(hdc[2], player.x, player.y, hdc[0], im[player.direction][2], im[player.direction][3], im[player.direction][0], im[player.direction][1]);

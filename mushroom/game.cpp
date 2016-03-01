@@ -119,7 +119,7 @@ void Game::GameOver() {
 }
 
 void Game::Timeout() {
-    switch (YesNoBox(L"是否记录分数？")) {
+    switch (YesNoBox(L"游戏结束！\n是否记录分数？")) {
         case IDYES:
             GameOver();
         case IDNO:
