@@ -1,4 +1,4 @@
-#include "mushroom.h"
+ï»¿#include "mushroom.h"
 
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
@@ -76,7 +76,7 @@ FILE *GetFilePtr(int mode) {
     ofn.lpstrFile = file;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(file);
-    ofn.lpstrFilter = L"ËùÓĞÎÄ¼ş(*.*)\0*.*\0²ÉÄ¢¹½´æµµÎÄ¼ş(*.mrs)\0*.mrs\0";
+    ofn.lpstrFilter = L"æ‰€æœ‰æ–‡ä»¶(*.*)\0*.*\0é‡‡è˜‘è‡å­˜æ¡£æ–‡ä»¶(*.mrs)\0*.mrs\0";
     ofn.nFilterIndex = 2;
     //ofn.lpstrFileTitle = NULL;
     //ofn.nMaxFileTitle = 0;

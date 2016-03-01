@@ -1,4 +1,4 @@
-#include "mushroom.h"
+ï»¿#include "mushroom.h"
 
 Game::Game() {
     time_left = 0;
@@ -119,7 +119,7 @@ void Game::GameOver() {
 }
 
 void Game::Timeout() {
-    switch (YesNoBox(L"ÓÎÏ·½áÊø£¡\nÊÇ·ñ¼ÇÂ¼·ÖÊı£¿")) {
+    switch (YesNoBox(L"æ¸¸æˆç»“æŸï¼\næ˜¯å¦è®°å½•åˆ†æ•°ï¼Ÿ")) {
         case IDYES:
             GameOver();
         case IDNO:
@@ -129,7 +129,7 @@ void Game::Timeout() {
 }
 
 void Game::ExitGame() {
-    switch (YesNoCancelBox(L"ÊÇ·ñÍË³ö²¢¼ÇÂ¼·ÖÊı£¿\nµã»÷¡°È¡Ïû¡±¿É·µ»Ø¡£")) {
+    switch (YesNoCancelBox(L"æ˜¯å¦é€€å‡ºå¹¶è®°å½•åˆ†æ•°ï¼Ÿ\nç‚¹å‡»â€œå–æ¶ˆâ€å¯è¿”å›ã€‚")) {
         case IDYES:
             GameOver();
         case IDNO:

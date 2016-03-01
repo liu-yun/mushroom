@@ -1,4 +1,4 @@
-#include "mushroom.h"
+﻿#include "mushroom.h"
 
 Player::Player() {
     x = kWidth / 2 - kPlayerSize;
