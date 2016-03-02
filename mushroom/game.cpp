@@ -109,12 +109,17 @@ void Game::GameOver() {
     wchar_t buffer[100];
     swprintf_s(buffer, L"Game over!\nScore:%d", score);
     InfoBox(buffer);
+    
     FILE *fp;
     if (_wfopen_s(&fp, L"highscores.txt", L"at+, ccs=UTF-8") == 1) {
         ErrorBox(L"fopen failed");
         return;
     }
-    fwprintf_s(fp, L"%s\t%d", player_name, score);
+    time_t now = time(nullptr);
+    tm tstruct;
+    localtime_s(&tstruct, &now);
+    wcsftime(buffer, sizeof(buffer), L"%Y/%m/%d", &tstruct);
+    fwprintf_s(fp, L"%s\t%d\t%s\n", player_name, score, buffer);
     fclose(fp);
 }
 

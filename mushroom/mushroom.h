@@ -114,7 +114,10 @@ inline int YesNoCancelBox(const wchar_t str[]) {
  
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-bool OnInitInputDialog(HWND hWnd, HWND hWndFocus, LPARAM lParam);
+int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+bool OnInitInputDialog(HWND hWnd, LPARAM lParam);
+bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]);
+void HandleSubitems(LPARAM lParam, wchar_t data[50][3][50]);
 FILE *GetFilePtr(int mode);
 extern wchar_t temp_name[10]; extern int temp_num[5];
 

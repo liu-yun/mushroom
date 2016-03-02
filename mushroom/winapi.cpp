@@ -3,7 +3,7 @@
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
         case WM_INITDIALOG:
-            OnInitInputDialog(hDlg, (HWND)wParam, lParam);
+            OnInitInputDialog(hDlg, lParam);
             return 1;
         case WM_COMMAND:
             if (LOWORD(wParam) == IDOK) {
@@ -33,17 +33,32 @@ int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     return 0;
 }
 
-bool OnInitInputDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) {
+int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+    static wchar_t data[100][3][50];
+    switch (message) {
+        case WM_INITDIALOG:
+            OnInitHighScoresDialog(hDlg, lParam, data);
+            return 1;
+        case WM_COMMAND:
+            if (LOWORD(wParam) == IDOK) {
+                EndDialog(hDlg, LOWORD(wParam));
+                return 1;
+            }
+            return 0;
+        case WM_NOTIFY:
+            HandleSubitems(lParam, data);
+            return 1;
+    }
+    return 0;
+}
+
+bool OnInitInputDialog(HWND hDlg, LPARAM lParam) {
     INITCOMMONCONTROLSEX iccx;
     iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
     iccx.dwICC = ICC_UPDOWN_CLASS | ICC_PROGRESS_CLASS;
     if (!InitCommonControlsEx(&iccx))
         return false;
-    //RECT rc = { 20, 20, 100, 24 };
-    //HWND  hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", 0,
-    //    WS_CHILD | WS_VISIBLE, rc.left, rc.top, rc.right, rc.bottom,
-    //    hDlg, (HMENU)IDC_EDIT2, GetModuleHandle(NULL), 0);
-    //SetRect(&rc, 20, 60, 180, 20);
+
     const int kRanges[4][2] = { { 1,60 },{ 1,6 },{ 1,5 },{ 1,10 } };
     for (int i = 0; i < 4; i++) {
         HWND hUpdown = CreateWindowEx(0, UPDOWN_CLASS, nullptr,
@@ -65,6 +80,66 @@ bool OnInitInputDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) {
     for (int i = 0; i < 4; i++)
         SetDlgItemInt(hDlg, IDC_EDIT2 + i, kDefaults[i], 0);
     return true;
+}
+
+bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]) {
+    INITCOMMONCONTROLSEX iccx;
+    iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    iccx.dwICC = ICC_LISTVIEW_CLASSES;
+    if (!InitCommonControlsEx(&iccx))
+        return false;
+
+    HWND hListview = CreateWindowEx(0, WC_LISTVIEW, nullptr,
+        WS_CHILD | LVS_REPORT | WS_VISIBLE,
+        16, 16, 300, 280, hDlg, (HMENU)IDC_LISTVIEW1, GetModuleHandle(nullptr), nullptr);
+
+    wchar_t kHeaders[3][6] = { L"Name",L"Score",L"Date" };
+    LVCOLUMN column;
+    column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;
+    for (int i = 0; i < 3; i++) {
+        column.iSubItem = i;
+        column.pszText = kHeaders[i];
+        column.cx = 100;               // Width of column in pixels.
+        column.fmt = LVCFMT_LEFT;  // Left-aligned column.
+        ListView_InsertColumn(hListview, i, &column);
+    }
+
+    FILE *fp;
+    if (_wfopen_s(&fp, L"highscores.txt", L"at+, ccs=UTF-8") == 1) {
+        ErrorBox(L"fopen failed");
+    }
+    LVITEM item;
+    item.mask = LVIF_TEXT | LVIF_STATE;
+    item.stateMask = 0;
+    item.iSubItem = 0;
+    item.state = 0;
+    for (int i = 0; !feof(fp); i++) {
+        fwscanf_s(fp, L"%s\t%s\t%s", &data[i][0], 50, &data[i][1], 50, &data[i][2], 50);
+        item.pszText = data[i][0];
+        item.iItem = i;
+        ListView_InsertItem(hListview, &item);
+    }
+    fclose(fp);
+    return true;
+}
+
+void HandleSubitems(LPARAM lParam, wchar_t data[50][3][50]) {
+    NMLVDISPINFO* plvdi;
+    switch (((LPNMHDR)lParam)->code) {
+        case LVN_GETDISPINFO:
+            plvdi = (NMLVDISPINFO*)lParam;
+            switch (plvdi->item.iSubItem) {
+                case 1:
+                    plvdi->item.pszText = data[plvdi->item.iItem][1];
+                    break;
+                case 2:
+                    plvdi->item.pszText = data[plvdi->item.iItem][2];
+                    break;
+                default:
+                    break;
+            }
+            break;
+    }
 }
 
 FILE *GetFilePtr(int mode) {

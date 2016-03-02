@@ -12,6 +12,7 @@ void GameMain(HDC hdc[]) {
     Game game;
     Player player;
     //DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_INSTRUCTIONDIALOG), GetHWnd(), InstructionDialog);
+    DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_HIGHSCORESDIALOG), GetHWnd(), HighScoresDialog);
     GetGameData(game, player);
 
     while (true) {
