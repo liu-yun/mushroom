@@ -115,7 +115,7 @@ bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][11]) {
     item.iSubItem = 0;
     item.state = 0;
     for (int i = 0; !feof(fp) && i < 50; i++) {
-        fwscanf_s(fp, L"%s\t%s\t%s", &data[i][0], 11, &data[i][1], 11, &data[i][2], 11);
+        fwscanf_s(fp, L"%s\t%s\t%s\n", &data[i][0], sizeof data[i][0], &data[i][1], sizeof data[i][1], &data[i][2], sizeof data[i][2]);
         item.pszText = data[i][0];
         item.iItem = i;
         ListView_InsertItem(hListview, &item);
