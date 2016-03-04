@@ -80,9 +80,10 @@ void Game::ClearGrass() {
     }
     delete p;
 
-    h = new GrassNode(0);
+    h = new GrassNode(-1);
     grass_num = 0;
     last_id = 0;
+    ZeroMemory(GrassNode::grid, sizeof(GrassNode::grid));
 }
 
 void Game::PickMushroom() {
