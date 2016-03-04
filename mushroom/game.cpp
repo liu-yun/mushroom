@@ -83,7 +83,7 @@ void Game::ClearGrass() {
     h = new GrassNode(-1);
     grass_num = 0;
     last_id = 0;
-    ZeroMemory(GrassNode::grid, sizeof(GrassNode::grid));
+    ZeroMemory(GrassNode::grid, sizeof GrassNode::grid);
 }
 
 void Game::PickMushroom() {
@@ -119,7 +119,7 @@ void Game::GameOver() {
     time_t now = time(nullptr);
     tm tstruct;
     localtime_s(&tstruct, &now);
-    wcsftime(buffer, sizeof(buffer), L"%Y/%m/%d", &tstruct);
+    wcsftime(buffer, sizeof buffer, L"%Y/%m/%d", &tstruct);
     fwprintf_s(fp, L"%s\t%d\t%s\n", player_name, score, buffer);
     fclose(fp);
 }

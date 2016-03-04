@@ -16,14 +16,6 @@ void Player::Move() {
         y = y <= kPlayerSize ? kPlayerSize + 1 : y;
         x = x >= kWidth - kPlayerSize ? kWidth - kPlayerSize - 1 : x;
         y = y >= kBottom - kPlayerSize ? kBottom - kPlayerSize - 1 : y;
-        /*if (x <= 16)
-        x = 16 + 1;
-        if (y <= 16)
-        y = 16 + 1;
-        if (x >= 800 - 16)
-        x = 800 - 16 - 1;
-        if (y >= 490 - 16)
-        y = 490 - 16 - 1;*/
     }
     x += speed*dx;
     y += speed*dy;

@@ -7,7 +7,7 @@ int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) 
             return 1;
         case WM_COMMAND:
             if (LOWORD(wParam) == IDOK) {
-                GetDlgItemText(hDlg, IDC_EDIT1, temp_name, 10);
+                GetDlgItemText(hDlg, IDC_EDIT1, temp_name, 11);
                 for (int i = 0; i < 4; i++)
                     temp_num[i] = GetDlgItemInt(hDlg, IDC_EDIT2 + i, nullptr, 0);
                 temp_num[4] = SendMessage(GetDlgItem(hDlg, IDC_TRACKBAR1), TBM_GETPOS, 0, 0);
@@ -34,7 +34,7 @@ int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 }
 
 int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-    static wchar_t data[100][3][50];
+    static wchar_t data[50][3][11];
     switch (message) {
         case WM_INITDIALOG:
             OnInitHighScoresDialog(hDlg, lParam, data);
@@ -82,7 +82,7 @@ bool OnInitInputDialog(HWND hDlg, LPARAM lParam) {
     return true;
 }
 
-bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]) {
+bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][11]) {
     INITCOMMONCONTROLSEX iccx;
     iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
     iccx.dwICC = ICC_LISTVIEW_CLASSES;
@@ -91,16 +91,17 @@ bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]) {
 
     HWND hListview = CreateWindowEx(0, WC_LISTVIEW, nullptr,
         WS_CHILD | LVS_REPORT | WS_VISIBLE,
-        16, 16, 300, 280, hDlg, (HMENU)IDC_LISTVIEW1, GetModuleHandle(nullptr), nullptr);
+        16, 16, 248, 240, hDlg, (HMENU)IDC_LISTVIEW1, GetModuleHandle(nullptr), nullptr);
 
-    wchar_t kHeaders[3][6] = { L"Name",L"Score",L"Date" };
+    wchar_t kHeaders[3][3] = { L"玩家",L"分数",L"日期" };
+    const int kColumnWidth[3] = { 100,50,80 };
     LVCOLUMN column;
     column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;
+    column.fmt = LVCFMT_LEFT;
     for (int i = 0; i < 3; i++) {
         column.iSubItem = i;
         column.pszText = kHeaders[i];
-        column.cx = 100;               // Width of column in pixels.
-        column.fmt = LVCFMT_LEFT;  // Left-aligned column.
+        column.cx = kColumnWidth[i];
         ListView_InsertColumn(hListview, i, &column);
     }
 
@@ -113,8 +114,8 @@ bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]) {
     item.stateMask = 0;
     item.iSubItem = 0;
     item.state = 0;
-    for (int i = 0; !feof(fp); i++) {
-        fwscanf_s(fp, L"%s\t%s\t%s", &data[i][0], 50, &data[i][1], 50, &data[i][2], 50);
+    for (int i = 0; !feof(fp) && i < 50; i++) {
+        fwscanf_s(fp, L"%s\t%s\t%s", &data[i][0], 11, &data[i][1], 11, &data[i][2], 11);
         item.pszText = data[i][0];
         item.iItem = i;
         ListView_InsertItem(hListview, &item);
@@ -123,34 +124,23 @@ bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]) {
     return true;
 }
 
-void HandleSubitems(LPARAM lParam, wchar_t data[50][3][50]) {
-    NMLVDISPINFO* plvdi;
-    switch (((LPNMHDR)lParam)->code) {
-        case LVN_GETDISPINFO:
-            plvdi = (NMLVDISPINFO*)lParam;
-            switch (plvdi->item.iSubItem) {
-                case 1:
-                    plvdi->item.pszText = data[plvdi->item.iItem][1];
-                    break;
-                case 2:
-                    plvdi->item.pszText = data[plvdi->item.iItem][2];
-                    break;
-                default:
-                    break;
-            }
-            break;
+void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]) {
+    NMLVDISPINFO* p;
+    if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
+        p = (NMLVDISPINFO*)lParam;
+        p->item.pszText = data[p->item.iItem][p->item.iSubItem];
     }
 }
 
 FILE *GetFilePtr(int mode) {
     wchar_t file[260];
     OPENFILENAME ofn;
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
+    ZeroMemory(&ofn, sizeof ofn);
+    ofn.lStructSize = sizeof ofn;
     ofn.hwndOwner = GetHWnd();
     ofn.lpstrFile = file;
     ofn.lpstrFile[0] = '\0';
-    ofn.nMaxFile = sizeof(file);
+    ofn.nMaxFile = sizeof file;
     ofn.lpstrFilter = L"所有文件(*.*)\0*.*\0采蘑菇存档文件(*.mrs)\0*.mrs\0";
     ofn.nFilterIndex = 2;
     //ofn.lpstrFileTitle = NULL;

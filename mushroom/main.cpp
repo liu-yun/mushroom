@@ -87,7 +87,7 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
     { 212,92,111,103 } };
     const int kX[] = { 100,300,500,700 };
     const int kY[] = { 81,243,405 };
-    wchar_t buffer[10];
+    wchar_t buffer[11];
 
     BeginBatchDraw();
     //draw background
@@ -112,7 +112,7 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
             }
         }
         if (!p->visible) {
-            _itow_s(p->score, buffer, 10);
+            _itow_s(p->score, buffer, sizeof buffer);
             OutputText(hdc[0], kX[p->x], kY[p->y], buffer);
         }
         p = p->next;
@@ -120,9 +120,9 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
 
     //draw score, time
     OutputText(hdc[0], kTextsXY[0], game.player_name);
-    _itow_s(game.score, buffer, 10);
+    _itow_s(game.score, buffer, sizeof buffer);
     OutputText(hdc[0], kTextsXY[1], buffer);
-    _itow_s(game.time_left, buffer, 10);
+    _itow_s(game.time_left, buffer, sizeof buffer);
     OutputText(hdc[0], kTextsXY[2], buffer);
     //draw player
     Transparent(hdc[0], player.x, player.y, hdc[1], kPlayer[player.direction]);
@@ -142,7 +142,7 @@ void DrawGraphic(HDC hdc[], Game &game, Player &player) {
     //TransparentBlt(images_hdc[2], 0, 0, 793, 233, hdc[0], 0, 0, 793, 233, 0x0);
 }
 
-wchar_t temp_name[10]; int temp_num[5];
+wchar_t temp_name[11]; int temp_num[5];
 void GetGameData(Game &game, Player &player) {
     DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_INPUTDIALOG), GetHWnd(), InputDialog);
     wcscpy_s(game.player_name, temp_name[0] ? temp_name : L"?");
@@ -244,7 +244,7 @@ void ReadGameFromFile(Game &game, Player &player) {
         InfoBox(L"读取失败");
         return;
     }
-    fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, 10, &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);
+    fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, sizeof game.player_name, &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);
     fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\n", &player.x, &player.y, &player.dx, &player.dy, &player.speed, &player.direction);
     GrassNode *p = game.h, *s;
     int bool_temp;//hack C4477

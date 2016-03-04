@@ -40,7 +40,7 @@ public:
 
 class Game {
 public:
-    wchar_t player_name[10];
+    wchar_t player_name[11];
     int time_left;
     int score;
     int init_num;
@@ -116,10 +116,10 @@ int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 bool OnInitInputDialog(HWND hWnd, LPARAM lParam);
-bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][50]);
-void HandleSubitems(LPARAM lParam, wchar_t data[50][3][50]);
+bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][11]);
+void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]);
 FILE *GetFilePtr(int mode);
-extern wchar_t temp_name[10]; extern int temp_num[5];
+extern wchar_t temp_name[11]; extern int temp_num[5];
 
 void GameMain(HDC hdc[]);
 
