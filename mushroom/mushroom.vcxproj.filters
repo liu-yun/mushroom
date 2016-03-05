@@ -44,6 +44,12 @@
     <ClCompile Include="grass_node.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="game_main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="game_menu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="mushroom.rc">

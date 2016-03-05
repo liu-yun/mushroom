@@ -66,6 +66,7 @@ public:
     void Timeout();
     void ExitGame();
 };
+
 //dx = 0;  dy = -1; 上
 //dx = 0;  dy = 1;  下
 //dx = -1; dy = 0;  左
@@ -115,21 +116,23 @@ inline int YesNoCancelBox(const wchar_t str[]) {
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-bool OnInitInputDialog(HWND hWnd, LPARAM lParam);
-bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][11]);
+bool OnInitInputDialog(HWND hWnd);
+bool OnInitHighScoresDialog(HWND hDlg, wchar_t data[50][3][11]);
 void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]);
 FILE *GetFilePtr(int mode);
 extern wchar_t temp_name[11]; extern int temp_num[5];
 
-void GameMain(HDC hdc[]);
-
 void InitScene(IMAGE *images, HDC hdc[]);
-void DrawGraphic(HDC hdc[], Game &game, Player &player);
-void GetGameData(Game &game, Player &player);
-void GetAndDispatchCommand(Game &game, Player &player);
-void GetGrassFocus(Game &game, Player &player);
 void SaveGameToFile(Game &game, Player &player);
 void ReadGameFromFile(Game &game, Player &player);
-
 void SleepMs(int ms);
-int GetButtonFocus(int x, int y);
+
+void GameMain(HDC hdc[]);
+void GetGameData(Game &game, Player &player);
+void DrawGraphic(HDC hdc[], Game &game, Player &player);
+void GetAndDispatchCommand(Game &game, Player &player);
+void GetGrassFocus(Game &game, Player &player);
+int GetGameButtonFocus(int x, int y);
+
+void GameMenu(HDC hdc[]);
+int GetMenuButtonFocus(int x, int y);

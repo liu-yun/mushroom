@@ -3,7 +3,7 @@
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
         case WM_INITDIALOG:
-            OnInitInputDialog(hDlg, lParam);
+            OnInitInputDialog(hDlg);
             return 1;
         case WM_COMMAND:
             if (LOWORD(wParam) == IDOK) {
@@ -37,7 +37,7 @@ int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
     static wchar_t data[50][3][11];
     switch (message) {
         case WM_INITDIALOG:
-            OnInitHighScoresDialog(hDlg, lParam, data);
+            OnInitHighScoresDialog(hDlg, data);
             return 1;
         case WM_COMMAND:
             if (LOWORD(wParam) == IDOK) {
@@ -52,7 +52,7 @@ int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
     return 0;
 }
 
-bool OnInitInputDialog(HWND hDlg, LPARAM lParam) {
+bool OnInitInputDialog(HWND hDlg) {
     INITCOMMONCONTROLSEX iccx;
     iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
     iccx.dwICC = ICC_UPDOWN_CLASS | ICC_PROGRESS_CLASS;
@@ -82,7 +82,7 @@ bool OnInitInputDialog(HWND hDlg, LPARAM lParam) {
     return true;
 }
 
-bool OnInitHighScoresDialog(HWND hDlg, LPARAM lParam, wchar_t data[50][3][11]) {
+bool OnInitHighScoresDialog(HWND hDlg, wchar_t data[50][3][11]) {
     INITCOMMONCONTROLSEX iccx;
     iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
     iccx.dwICC = ICC_LISTVIEW_CLASSES;
