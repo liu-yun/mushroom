@@ -14,6 +14,7 @@ Game::Game() {
     button_focus = -1;
     button_on_click = false;
     paused = true;
+    on_exit = false;
 }
 
 void Game::UpdateTimer() {
@@ -106,41 +107,48 @@ void Game::PickMushroom() {
     }
 }
 
-void Game::GameOver() {
-    wchar_t buffer[100];
-    swprintf_s(buffer, L"Game over!\nScore:%d", score);
-    InfoBox(buffer);
-    
+void Game::SaveScoreToLeaderboard() {
+    wchar_t path[260];
+    GetModuleFileName(nullptr, path, sizeof path);
+    PathRemoveFileSpec(path);
+    wcscat_s(path, L"\\leaderboard.txt");
     FILE *fp;
-    if (_wfopen_s(&fp, L"highscores.txt", L"at+, ccs=UTF-8") == 1) {
+    if (_wfopen_s(&fp, path, L"at+, ccs=UTF-8") == 1) {
         ErrorBox(L"fopen failed");
         return;
     }
     time_t now = time(nullptr);
     tm tstruct;
     localtime_s(&tstruct, &now);
+    wchar_t buffer[100];
     wcsftime(buffer, sizeof buffer, L"%Y/%m/%d", &tstruct);
     fwprintf_s(fp, L"%s\t%d\t%s\n", player_name, score, buffer);
     fclose(fp);
 }
 
 void Game::Timeout() {
-    switch (YesNoBox(L"游戏结束！\n是否记录分数？")) {
+    wchar_t buffer[50];
+    swprintf_s(buffer, L"游戏结束！\n分数: %d\n是否记录分数？", score);
+    switch (YesNoBox(buffer)) {
         case IDYES:
-            GameOver();
+            SaveScoreToLeaderboard();
         case IDNO:
-            closegraph();
-            exit(0);
+            on_exit = 1;
+            ClearGrass();
+            break;
     }
 }
 
 void Game::ExitGame() {
-    switch (YesNoCancelBox(L"是否退出并记录分数？\n点击“取消”可返回。")) {
+    wchar_t buffer[50];
+    swprintf_s(buffer, L"分数: %d\n是否退出并记录分数？\n点击“取消”可返回。", score);
+    switch (YesNoCancelBox(buffer)) {
         case IDYES:
-            GameOver();
+            SaveScoreToLeaderboard();
         case IDNO:
-            closegraph();
-            exit(0);
+            on_exit = 1;
+            ClearGrass();
+            break;
         case IDCANCEL:
             break;
     }

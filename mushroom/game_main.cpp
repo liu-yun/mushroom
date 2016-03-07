@@ -1,12 +1,6 @@
 ﻿#include "mushroom.h"
 
-void GameMain(HDC hdc[]) {
-    Game game;
-    Player player;
-    //DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_INSTRUCTIONDIALOG), GetHWnd(), InstructionDialog);
-    DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_HIGHSCORESDIALOG), GetHWnd(), HighScoresDialog);
-    GetGameData(game, player);
-
+void GameMain(Game &game, Player &player, HDC hdc[]) {
     while (true) {
         GetAndDispatchCommand(game, player);
         if (!game.paused) {
@@ -15,14 +9,17 @@ void GameMain(HDC hdc[]) {
             game.UpdateTimer();
             game.NewGrassTimer();
         }
-        DrawGraphic(hdc, game, player);
+        DrawGameGraphic(hdc, game, player);
         SleepMs(5);
+        if (game.on_exit)
+            return;
     }
 }
 
 wchar_t temp_name[11]; int temp_num[5];
-void GetGameData(Game &game, Player &player) {
-    DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_INPUTDIALOG), GetHWnd(), InputDialog);
+bool InitNewGame(Game &game, Player &player) {
+    if (DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_INPUTDIALOG), GetHWnd(), InputDialog) == IDCANCEL)
+        return false;
     wcscpy_s(game.player_name, temp_name[0] ? temp_name : L"?");
     game.time_left = temp_num[0];
     game.init_num = temp_num[1];
@@ -30,9 +27,10 @@ void GetGameData(Game &game, Player &player) {
     game.interval = temp_num[3];
     player.speed = temp_num[4];
     game.InitGrass();
+    return true;
 }
 
-void DrawGraphic(HDC hdc[], Game &game, Player &player) {
+void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
     //Info:Player name, Score, Time Center point X, Y
     const int kTextsXY[3][2] = { { 433,537 },{ 573,537 },{ 715,537 } };
     //Buttons:Start, Save, Clear, Quit X, Y
@@ -179,9 +177,9 @@ void GetGrassFocus(Game &game, Player &player) {
 }
 
 int GetGameButtonFocus(int x, int y) {
-    const int button[4][2] = { { 55,542 },{ 135,542 },{ 215,542 },{ 295,542 } };
+    const int kButtons[4][2] = { { 55,542 },{ 135,542 },{ 215,542 },{ 295,542 } };
     for (int i = 0; i < 4; i++) {
-        if (pow(x - button[i][0], 2) + pow(y - button[i][1], 2) < 32 * 32)
+        if (pow(x - kButtons[i][0], 2) + pow(y - kButtons[i][1], 2) < 32 * 32)
             return i;
     }
     return -1;

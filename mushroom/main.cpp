@@ -1,10 +1,12 @@
 ﻿#include "mushroom.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
-    IMAGE images[2];
-    HDC hdc[3];
+    IMAGE images[3];
+    HDC hdc[4];
+    Game game;
+    Player player;
     InitScene(images, hdc);
-    GameMain(hdc);
+    GameMenu(game, player, hdc);
     return 0;
 }
 
@@ -24,10 +26,12 @@ void InitScene(IMAGE *images, HDC hdc[]) {
     settextstyle(&f);
 
     loadimage(images + 0, L"Image", MAKEINTRESOURCE(IDR_IMAGE1)); //ImageRes
-    loadimage(images + 1, L"Image", MAKEINTRESOURCE(IDR_UI)); //Background
+    loadimage(images + 1, L"Image", MAKEINTRESOURCE(IDR_UI)); //UI
+    loadimage(images + 2, L"Image", MAKEINTRESOURCE(IDR_MENU)); //Menu
     hdc[0] = GetImageHDC();
     hdc[1] = GetImageHDC(images);
     hdc[2] = GetImageHDC(images + 1);
+    hdc[3] = GetImageHDC(images + 2);
     SetTextColor(hdc[0], BLACK);
     SetBkMode(hdc[0], TRANSPARENT);
     SetTextAlign(hdc[0], TA_CENTER);
@@ -35,10 +39,8 @@ void InitScene(IMAGE *images, HDC hdc[]) {
 
 void SaveGameToFile(Game &game, Player &player) {
     FILE *fp = GetFilePtr(1);
-    if (!fp) {
-        ErrorBox(L"未保存");
+    if (!fp)
         return;
-    }
     fwprintf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", game.player_name, game.time_left, game.score, game.grass_num, game.num_at_a_time, game.interval, game.last_id);
     fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\n", player.x, player.y, player.dx, player.dy, player.speed, player.direction);
     GrassNode *p = game.h->next;
@@ -50,25 +52,25 @@ void SaveGameToFile(Game &game, Player &player) {
     InfoBox(L"已保存");
 }
 
-void ReadGameFromFile(Game &game, Player &player) {
+bool LoadGameFromFile(Game &game, Player &player) {
     FILE *fp = GetFilePtr(0);
-    if (!fp) {
-        InfoBox(L"读取失败");
-        return;
-    }
+    if (!fp)
+        return false;
     fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, sizeof game.player_name, &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);
     fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\n", &player.x, &player.y, &player.dx, &player.dy, &player.speed, &player.direction);
+    game.h = new GrassNode(-1);
     GrassNode *p = game.h, *s;
-    int bool_temp;//hack C4477
+    int temp_bool; //C4477
     for (int i = 0; i < game.grass_num; i++) {
         s = new GrassNode(i);
-        fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &p->id, &p->type, &p->grass_style, &p->score, &p->x, &p->y, &bool_temp);
-        p->visible = bool_temp != 0;
+        fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &p->id, &p->type, &p->grass_style, &p->score, &p->x, &p->y, &temp_bool);
+        p->visible = temp_bool != 0;
         GrassNode::grid[p->y][p->x] = 1;
         p->next = s;
         p = p->next;
     }
     fclose(fp);
+    return true;
 }
 
 void SleepMs(int ms) {

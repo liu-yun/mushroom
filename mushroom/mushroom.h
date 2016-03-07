@@ -4,6 +4,7 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "Shlwapi.lib")
 
 #include <Windows.h>
 #include <commctrl.h>
@@ -11,6 +12,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <stdio.h>
 #include <math.h>
 #include <SDKDDKVer.h>
+#include <Shlwapi.h>
 
 #include "lib/graphics.h"
 #include "resource.h"
@@ -53,6 +55,7 @@ public:
     int button_focus;
     bool button_on_click;
     bool paused;
+    bool on_exit;
 
     Game();
     void InitGrass();
@@ -62,7 +65,7 @@ public:
     void PickMushroom();
     void UpdateTimer();
     void NewGrassTimer();
-    void GameOver();
+    void SaveScoreToLeaderboard();
     void Timeout();
     void ExitGame();
 };
@@ -97,7 +100,7 @@ inline int Transparent(HDC hdc, int x, int y, HDC hdcsrc, const int src[]) {
 inline int OutputText(HDC hdc, const int t[], wchar_t str[]) {
     return ExtTextOut(hdc, t[0], t[1], 0, nullptr, str, wcslen(str), 0);
 }
-inline int OutputText(HDC hdc,  int x, int y, wchar_t str[]) {
+inline int OutputText(HDC hdc, int x, int y, wchar_t str[]) {
     return ExtTextOut(hdc, x, y, 0, nullptr, str, wcslen(str), 0);
 }
 inline int ErrorBox(const wchar_t str[]) {
@@ -112,27 +115,29 @@ inline int YesNoBox(const wchar_t str[]) {
 inline int YesNoCancelBox(const wchar_t str[]) {
     return MessageBox(GetHWnd(), str, kMushroom, MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1);
 }
- 
+
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+int CALLBACK HelpDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 bool OnInitInputDialog(HWND hWnd);
-bool OnInitHighScoresDialog(HWND hDlg, wchar_t data[50][3][11]);
+bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]);
 void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]);
 FILE *GetFilePtr(int mode);
 extern wchar_t temp_name[11]; extern int temp_num[5];
 
 void InitScene(IMAGE *images, HDC hdc[]);
 void SaveGameToFile(Game &game, Player &player);
-void ReadGameFromFile(Game &game, Player &player);
+bool LoadGameFromFile(Game &game, Player &player);
 void SleepMs(int ms);
 
-void GameMain(HDC hdc[]);
-void GetGameData(Game &game, Player &player);
-void DrawGraphic(HDC hdc[], Game &game, Player &player);
+void GameMain(Game &game, Player &player, HDC hdc[]);
+bool InitNewGame(Game &game, Player &player);
+void DrawGameGraphic(HDC hdc[], Game &game, Player &player);
 void GetAndDispatchCommand(Game &game, Player &player);
 void GetGrassFocus(Game &game, Player &player);
 int GetGameButtonFocus(int x, int y);
 
-void GameMenu(HDC hdc[]);
+void GameMenu(Game &game, Player &player, HDC hdc[]);
+void DrawMenuGraphic(HDC hdc[], Game &game);
+void GetAndDispatchMenuCommand(Game &game, Player &player, HDC hdc[]);
 int GetMenuButtonFocus(int x, int y);

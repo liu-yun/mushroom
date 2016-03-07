@@ -6,20 +6,24 @@ int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) 
             OnInitInputDialog(hDlg);
             return 1;
         case WM_COMMAND:
-            if (LOWORD(wParam) == IDOK) {
-                GetDlgItemText(hDlg, IDC_EDIT1, temp_name, 11);
-                for (int i = 0; i < 4; i++)
-                    temp_num[i] = GetDlgItemInt(hDlg, IDC_EDIT2 + i, nullptr, 0);
-                temp_num[4] = SendMessage(GetDlgItem(hDlg, IDC_TRACKBAR1), TBM_GETPOS, 0, 0);
-                EndDialog(hDlg, LOWORD(wParam));
-                return 1;
+            switch (LOWORD(wParam)) {
+                case IDOK:
+                    GetDlgItemText(hDlg, IDC_EDIT1, temp_name, 11);
+                    for (int i = 0; i < 4; i++)
+                        temp_num[i] = GetDlgItemInt(hDlg, IDC_EDIT2 + i, nullptr, 0);
+                    temp_num[4] = SendMessage(GetDlgItem(hDlg, IDC_TRACKBAR1), TBM_GETPOS, 0, 0);
+                    EndDialog(hDlg, LOWORD(wParam));
+                    return 1;
+                case IDCANCEL:
+                    EndDialog(hDlg, LOWORD(wParam));
+                    return 1;
             }
             return 0;
     }
     return 0;
 }
 
-int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+int CALLBACK HelpDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
         case WM_INITDIALOG:
             return 1;
@@ -33,11 +37,11 @@ int CALLBACK InstructionDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     return 0;
 }
 
-int CALLBACK HighScoresDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     static wchar_t data[50][3][11];
     switch (message) {
         case WM_INITDIALOG:
-            OnInitHighScoresDialog(hDlg, data);
+            OnInitLeaderboardDialog(hDlg, data);
             return 1;
         case WM_COMMAND:
             if (LOWORD(wParam) == IDOK) {
@@ -82,7 +86,7 @@ bool OnInitInputDialog(HWND hDlg) {
     return true;
 }
 
-bool OnInitHighScoresDialog(HWND hDlg, wchar_t data[50][3][11]) {
+bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     INITCOMMONCONTROLSEX iccx;
     iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
     iccx.dwICC = ICC_LISTVIEW_CLASSES;
@@ -105,8 +109,12 @@ bool OnInitHighScoresDialog(HWND hDlg, wchar_t data[50][3][11]) {
         ListView_InsertColumn(hListview, i, &column);
     }
 
+    wchar_t path[260];
+    GetModuleFileName(nullptr, path, sizeof path);
+    PathRemoveFileSpec(path);
+    wcscat_s(path, L"\\leaderboard.txt");
     FILE *fp;
-    if (_wfopen_s(&fp, L"highscores.txt", L"at+, ccs=UTF-8") == 1) {
+    if (_wfopen_s(&fp, path, L"at+, ccs=UTF-8") == 1) {
         ErrorBox(L"fopen failed");
     }
     LVITEM item;
