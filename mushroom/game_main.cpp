@@ -1,7 +1,7 @@
 ﻿#include "mushroom.h"
 
 void GameMain(Game &game, Player &player, HDC hdc[]) {
-    while (true) {
+    while (!game.on_exit) {
         GetAndDispatchCommand(game, player);
         if (!game.paused) {
             player.Move();
@@ -11,8 +11,6 @@ void GameMain(Game &game, Player &player, HDC hdc[]) {
         }
         DrawGameGraphic(hdc, game, player);
         SleepMs(5);
-        if (game.on_exit)
-            return;
     }
 }
 
@@ -20,7 +18,9 @@ wchar_t temp_name[11]; int temp_num[5];
 bool InitNewGame(Game &game, Player &player) {
     if (DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_INPUTDIALOG), GetHWnd(), InputDialog) == IDCANCEL)
         return false;
-    wcscpy_s(game.player_name, temp_name[0] ? temp_name : L"?");
+    srand(clock());
+    wchar_t emoji[3] = { 55357,56832 + rand() % 80,0 }; // Unicode U+1F600-U+1F64F
+    wcscpy_s(game.player_name, temp_name[0] ? temp_name : emoji);
     game.time_left = temp_num[0];
     game.init_num = temp_num[1];
     game.num_at_a_time = temp_num[2];
