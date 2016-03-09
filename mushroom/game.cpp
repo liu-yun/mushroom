@@ -8,31 +8,12 @@ Game::Game() {
     interval = 10;
     grass_num = 0;
     last_id = 0;
-    //h = InitGrass();
     h = nullptr;
     grass_focus = nullptr;
     button_focus = -1;
     button_on_click = false;
     paused = true;
     on_exit = false;
-}
-
-void Game::UpdateTimer() {
-    static clock_t old_clock = clock();
-    if (clock() - old_clock >= 1000) {
-        time_left--;
-        old_clock = clock();
-    }
-    if (time_left == -1)
-        Timeout();
-}
-
-void Game::NewGrassTimer() {
-    static clock_t old_clock = clock();
-    if (clock() - old_clock >= interval * 1000) {
-        old_clock = clock();
-        NewGrass();
-    }
 }
 
 void Game::InitGrass() {
@@ -60,12 +41,14 @@ void Game::NewGrass() {
 }
 
 void Game::DeleteGrass(int id) {
-    GrassNode *p = h;
+    GrassNode *p = h, *s;
     while (p) {
         if (p->next->id == id) {
+            s = p->next;
             p->next = p->next->next;
-            delete p->next;
             grass_num--;
+            GrassNode::grid[s->y][s->x] = 0;
+            delete s;
             return;
         }
         p = p->next;
@@ -90,9 +73,10 @@ void Game::ClearGrass() {
 void Game::PickMushroom() {
     if (!grass_focus)
         return;
-    if (grass_focus->visible)
+    if (grass_focus->picked)
         return;
-    grass_focus->visible = true;
+    grass_focus->picked = true;
+    grass_focus->time_picked = clock();
     switch (grass_focus->type) {
         case MUSHROOM:
             score += grass_focus->score;
@@ -104,6 +88,31 @@ void Game::PickMushroom() {
             break;
         default:
             break;
+    }
+}
+
+void Game::UpdateTimer() {
+    static clock_t old_clock = clock();
+    if (clock() - old_clock >= 1000) {
+        time_left--;
+        old_clock = clock();
+    }
+    if (time_left == -1)
+        Timeout();
+}
+
+void Game::GrassTimer() {
+    static clock_t old_clock = clock();
+    if (clock() - old_clock >= interval * 1000) {
+        old_clock = clock();
+        NewGrass();
+    }
+
+    GrassNode *p = h;
+    while (p) {
+        if (p->next && p->next->picked && clock() - p->next->time_picked > 2 * 1000)
+            DeleteGrass(p->next->id);
+        p = p->next;
     }
 }
 

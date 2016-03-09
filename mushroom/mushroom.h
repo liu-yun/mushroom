@@ -33,7 +33,8 @@ public:
     int score;
     int x;
     int y;
-    bool visible;
+    bool picked;
+    time_t time_picked;
     GrassNode *next;
     static int grid[3][4];
 
@@ -64,7 +65,7 @@ public:
     void ClearGrass();
     void PickMushroom();
     void UpdateTimer();
-    void NewGrassTimer();
+    void GrassTimer();
     void SaveScoreToLeaderboard();
     void Timeout();
     void ExitGame();

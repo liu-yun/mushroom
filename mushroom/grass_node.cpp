@@ -2,7 +2,8 @@
 
 GrassNode::GrassNode(int i) : id(i) {
     srand(clock());
-    visible = false;
+    picked = false;
+    time_picked = 0;
     next = nullptr;
     if (id == -1) {
         type = NOTHING;

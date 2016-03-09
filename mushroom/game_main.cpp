@@ -7,7 +7,7 @@ void GameMain(Game &game, Player &player, HDC hdc[]) {
             player.Move();
             GetGrassFocus(game, player);
             game.UpdateTimer();
-            game.NewGrassTimer();
+            game.GrassTimer();
         }
         DrawGameGraphic(hdc, game, player);
         SleepMs(5);
@@ -75,7 +75,7 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
         Transparent(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1],
             game.grass_focus && p->id == game.grass_focus->id ?
             kGrassHighlight[p->grass_style] : kGrass[p->grass_style]);
-        if (p->visible) {
+        if (p->picked) {
             switch (p->type) {
                 case MUSHROOM:
                     Transparent(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kMushrooms[p->score - 1]);
@@ -87,7 +87,7 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
                     break;
             }
         }
-        if (!p->visible) {
+        if (!p->picked) {
             _itow_s(p->score, buffer, 10);
             OutputText(hdc[0], kGrassX[p->x], kGrassY[p->y], buffer);
         }
