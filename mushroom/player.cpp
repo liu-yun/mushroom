@@ -44,3 +44,9 @@ void Player::SetDirection(Direction d) {
             break;
     }
 }
+
+void Player::Reset() {
+    x = kWidth / 2 - kPlayerSize;
+    y = kBottom - kPlayerSize - 1;
+    SetDirection(UP);
+}

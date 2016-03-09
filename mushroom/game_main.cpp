@@ -26,7 +26,9 @@ bool InitNewGame(Game &game, Player &player) {
     game.num_at_a_time = temp_num[2];
     game.interval = temp_num[3];
     player.speed = temp_num[4];
+    player.Reset();
     game.InitGrass();
+    game.paused = true;
     return true;
 }
 

@@ -87,6 +87,7 @@ public:
     Player();
     void Move();
     void SetDirection(Direction d);
+    void Reset();
 };
 
 inline int PutImage(HDC hdc, const int xy[], HDC hdcsrc, const int src[]) {
