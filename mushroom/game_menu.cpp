@@ -9,8 +9,23 @@ void GameMenu(Game &game, Player &player, HDC hdc[]) {
 }
 
 void DrawMenuGraphic(HDC hdc[], Game &game) {
+    const int kMenuItemsXY[5][2] = { { 430,180 },{ 430,250 },{ 430,320 },{ 430,390 },{ 430,460 } };
+    const int kMenuItems[10][4] = { { 252,465,250,40 },
+    { 252,588,250,40 },
+    { 1,465,250,40 },
+    { 252,506,250,40 },
+    { 1,547,250,40 },
+    { 1,506,250,40 },
+    { 252,547,250,40 },
+    { 1,588,250,40 },
+    { 1,629,250,40 },
+    { 252,629,250,40 } };
     BeginBatchDraw();
     BitBlt(hdc[0], 0, 0, 800, 600, hdc[3], 0, 0, SRCCOPY);
+    if (game.button_focus != -1 && !game.button_on_click)
+        PutImage(hdc[0], kMenuItemsXY[game.button_focus], hdc[1], kMenuItems[game.button_focus]);
+    if (game.button_on_click)
+        PutImage(hdc[0], kMenuItemsXY[game.button_focus], hdc[1], kMenuItems[5 + game.button_focus]);
     EndBatchDraw();
 }
 
