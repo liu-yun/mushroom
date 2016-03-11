@@ -61,7 +61,7 @@ public:
     Game();
     void InitGrass();
     void NewGrass();
-    void DeleteGrass(int id);
+    void DeleteGrassById(int id);
     void ClearGrass();
     void PickMushroom();
     void UpdateTimer();

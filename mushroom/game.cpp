@@ -40,7 +40,7 @@ void Game::NewGrass() {
     }
 }
 
-void Game::DeleteGrass(int id) {
+void Game::DeleteGrassById(int id) {
     GrassNode *p = h, *s;
     while (p) {
         if (p->next->id == id) {
@@ -111,7 +111,7 @@ void Game::GrassTimer() {
     GrassNode *p = h;
     while (p) {
         if (p->next && p->next->picked && clock() - p->next->time_picked > 2 * 1000)
-            DeleteGrass(p->next->id);
+            DeleteGrassById(p->next->id);
         p = p->next;
     }
 }

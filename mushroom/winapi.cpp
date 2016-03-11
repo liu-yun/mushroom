@@ -80,7 +80,7 @@ bool OnInitInputDialog(HWND hDlg) {
     SendMessage(hTrack, TBM_SETBUDDY, 1, (LPARAM)GetDlgItem(hDlg, IDC_STATIC1));
     SendMessage(hTrack, TBM_SETBUDDY, 0, (LPARAM)GetDlgItem(hDlg, IDC_STATIC2));
 
-    const int kDefaults[4] = { 60,4,1,10 };
+    const int kDefaults[4] = { 60,4,1,2 };
     for (int i = 0; i < 4; i++)
         SetDlgItemInt(hDlg, IDC_EDIT2 + i, kDefaults[i], 0);
     return true;

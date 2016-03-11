@@ -36,13 +36,13 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
     //Info:Player name, Score, Time Center point X, Y
     const int kTextsXY[3][2] = { { 433,537 },{ 573,537 },{ 715,537 } };
     //Buttons:Start, Save, Clear, Quit X, Y
-    const int kButtonsXY[4][2] = { { 15,505 },{ 95,505 },{ 175,505 },{ 255,505 } };
-    const int kButtons[6][4] = { { 465,1,80,82 },
-    { 163,92,80,82 },
-    { 1,92,80,82 },
-    { 546,1,80,82 },
-    { 82,92,80,82 },
-    { 244,92,80,82 } };
+    const int kButtonsXY[4][2] = { { 14,505 },{ 94,505 },{ 174,505 },{ 254,505 } };
+    const int kButtons[6][4] = { { 465,1,80,80 },
+    { 163,92,80,80 },
+    { 1,92,80,80 },
+    { 546,1,80,80 },
+    { 82,92,80,80 },
+    { 244,92,80,80 } };
     const int kPlayer[4][4] = { { 1,1,32,32 },
     { 34,1,32,32 },
     { 67,1,32,32 },
