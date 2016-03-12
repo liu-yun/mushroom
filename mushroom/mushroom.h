@@ -128,6 +128,7 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]);
 void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]);
 FILE *GetFilePtr(int mode);
 void CreateGrayscaleBitmap(HDC hdc);
+void MRSetCursor(int focus);
 extern wchar_t temp_name[11]; extern int temp_num[5];
 
 void InitScene(IMAGE *images, HDC hdc[]);

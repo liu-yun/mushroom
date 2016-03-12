@@ -192,3 +192,9 @@ void CreateGrayscaleBitmap(HDC hdc) {
     HBITMAP bitmap = CreateDIBSection(hdc, p, 0, DIB_RGB_COLORS, nullptr, 0);
     SelectObject(hdc, bitmap);
 }
+
+void MRSetCursor(int focus) {
+    static HCURSOR arrow = LoadCursor(nullptr, IDC_ARROW);
+    static HCURSOR hand = LoadCursor(nullptr, IDC_HAND);
+    SetClassLong(GetHWnd(), GCL_HCURSOR, focus != -1 ? (long)hand : (long)arrow);
+}

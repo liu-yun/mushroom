@@ -30,8 +30,6 @@ void DrawMenuGraphic(HDC hdc[], Game &game) {
 }
 
 void GetAndDispatchMenuCommand(Game &game, Player &player, HDC hdc[]) {
-    const HCURSOR arrow = LoadCursor(nullptr, IDC_ARROW);
-    const HCURSOR hand = LoadCursor(nullptr, IDC_HAND);
     MOUSEMSG message;
     if (MouseHit()) {
         message = GetMouseMsg();
@@ -40,7 +38,7 @@ void GetAndDispatchMenuCommand(Game &game, Player &player, HDC hdc[]) {
                 game.button_focus = GetMenuButtonFocus(message.x, message.y);
                 if (game.button_focus == -1)
                     game.button_on_click = false;
-                SetClassLong(GetHWnd(), GCL_HCURSOR, game.button_focus != -1 ? (long)hand : (long)arrow);
+                MRSetCursor(game.button_focus);
                 break;
             case WM_LBUTTONDOWN:
                 game.button_on_click = game.button_focus != -1 ? true : false;

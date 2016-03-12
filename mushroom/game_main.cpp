@@ -114,7 +114,7 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
     _itow_s(game.time_left, buffer, 10);
     MRTextOut(hdc[0], kTextsXY[2], buffer);
     //draw buttons
-    if (!game.paused && !game.button_on_click)
+    if (!game.paused)
         MRBitBlt(hdc[0], kButtonsXY[0], hdc[1], kButtons[5]); //Pause
     if (game.button_on_click)
         MRBitBlt(hdc[0], kButtonsXY[game.button_focus], hdc[1], kButtons[game.button_focus]);
@@ -124,8 +124,6 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
 }
 
 void GetAndDispatchCommand(Game &game, Player &player) {
-    const HCURSOR arrow = LoadCursor(nullptr, IDC_ARROW);
-    const HCURSOR hand = LoadCursor(nullptr, IDC_HAND);
     if (GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState(65) & 0x8000)
         player.SetDirection(LEFT);
     if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(87) & 0x8000)
@@ -147,7 +145,7 @@ void GetAndDispatchCommand(Game &game, Player &player) {
                 game.button_focus = GetGameButtonFocus(message.x, message.y);
                 if (game.button_focus == -1)
                     game.button_on_click = false;
-                SetClassLong(GetHWnd(), GCL_HCURSOR, game.button_focus != -1 ? (long)hand : (long)arrow);
+                MRSetCursor(game.button_focus);
                 break;
             case WM_LBUTTONDOWN:
                 game.button_on_click = game.button_focus != -1 ? true : false;
