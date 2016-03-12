@@ -13,6 +13,7 @@ Game::Game() {
     button_focus = -1;
     button_on_click = false;
     paused = true;
+    grayscale_ready = false;
     on_exit = false;
 }
 
@@ -91,7 +92,7 @@ void Game::PickMushroom() {
     }
 }
 
-void Game::UpdateTimer() {
+void Game::GameTimer() {
     static clock_t old_clock = clock();
     if (clock() - old_clock >= 1000) {
         time_left--;
@@ -160,5 +161,14 @@ void Game::ExitGame() {
             break;
         case IDCANCEL:
             break;
+    }
+}
+
+void Game::HandleReturnKey() {
+    static clock_t old_clock = clock();
+    if (clock() - old_clock >= 200) {
+        old_clock = clock();
+        paused = !paused;
+        grayscale_ready = false;
     }
 }

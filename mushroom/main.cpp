@@ -2,7 +2,7 @@
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     IMAGE images[3];
-    HDC hdc[4];
+    HDC hdc[5];
     Game game;
     Player player;
     InitScene(images, hdc);
@@ -32,6 +32,8 @@ void InitScene(IMAGE *images, HDC hdc[]) {
     hdc[1] = GetImageHDC(images);
     hdc[2] = GetImageHDC(images + 1);
     hdc[3] = GetImageHDC(images + 2);
+    hdc[4] = CreateCompatibleDC(hdc[0]);
+    CreateGrayscaleBitmap(hdc[4]);
     SetTextColor(hdc[0], BLACK);
     SetBkMode(hdc[0], TRANSPARENT);
     SetTextAlign(hdc[0], TA_CENTER);

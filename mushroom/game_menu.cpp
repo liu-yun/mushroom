@@ -21,11 +21,11 @@ void DrawMenuGraphic(HDC hdc[], Game &game) {
     { 1,629,250,40 },
     { 252,629,250,40 } };
     BeginBatchDraw();
-    BitBlt(hdc[0], 0, 0, 800, 600, hdc[3], 0, 0, SRCCOPY);
+    BitBlt(hdc[0], 0, 0, kWidth, kHeight, hdc[3], 0, 0, SRCCOPY);
     if (game.button_focus != -1 && !game.button_on_click)
-        PutImage(hdc[0], kMenuItemsXY[game.button_focus], hdc[1], kMenuItems[game.button_focus]);
+        MRBitBlt(hdc[0], kMenuItemsXY[game.button_focus], hdc[1], kMenuItems[game.button_focus]);
     if (game.button_on_click)
-        PutImage(hdc[0], kMenuItemsXY[game.button_focus], hdc[1], kMenuItems[5 + game.button_focus]);
+        MRBitBlt(hdc[0], kMenuItemsXY[game.button_focus], hdc[1], kMenuItems[5 + game.button_focus]);
     EndBatchDraw();
 }
 

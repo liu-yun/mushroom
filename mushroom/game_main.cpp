@@ -6,7 +6,7 @@ void GameMain(Game &game, Player &player, HDC hdc[]) {
         if (!game.paused) {
             player.Move();
             GetGrassFocus(game, player);
-            game.UpdateTimer();
+            game.GameTimer();
             game.GrassTimer();
         }
         DrawGameGraphic(hdc, game, player);
@@ -70,46 +70,56 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
 
     BeginBatchDraw();
     //draw background
-    BitBlt(hdc[0], 0, 0, 800, 600, hdc[2], 0, 0, SRCCOPY);
-    //draw mushrooms and scores
-    GrassNode *p = game.h->next;
-    while (p) {
-        Transparent(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1],
-            game.grass_focus && p->id == game.grass_focus->id ?
-            kGrassHighlight[p->grass_style] : kGrass[p->grass_style]);
-        if (p->picked) {
-            switch (p->type) {
-                case MUSHROOM:
-                    Transparent(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kMushrooms[p->score - 1]);
-                    break;
-                case BOMB:
-                    Transparent(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kBomb[0]);
-                    break;
-                case NOTHING:
-                    break;
+    BitBlt(hdc[0], 0, 0, kWidth, kHeight, hdc[2], 0, 0, SRCCOPY);
+    if (!game.grayscale_ready || !game.paused) {
+        //draw mushrooms and its scores
+        GrassNode *p = game.h->next;
+        while (p) {
+            MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1],
+                game.grass_focus && p->id == game.grass_focus->id ?
+                kGrassHighlight[p->grass_style] : kGrass[p->grass_style]);
+            if (p->picked) {
+                switch (p->type) {
+                    case MUSHROOM:
+                        MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kMushrooms[p->score - 1]);
+                        break;
+                    case BOMB:
+                        MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kBomb[0]);
+                        break;
+                    case NOTHING:
+                        break;
+                }
             }
+            if (!p->picked) {
+                _itow_s(p->score, buffer, 10);
+                MRTextOut(hdc[0], kGrassX[p->x], kGrassY[p->y], buffer);
+            }
+            p = p->next;
         }
-        if (!p->picked) {
-            _itow_s(p->score, buffer, 10);
-            OutputText(hdc[0], kGrassX[p->x], kGrassY[p->y], buffer);
+        //draw player
+        MRTransparentBlt(hdc[0], player.x, player.y, hdc[1], kPlayer[player.direction]);
+    }
+    //grayscale when paused
+    if (game.paused) {
+        if (!game.grayscale_ready) {
+            BitBlt(hdc[4], 0, 0, kWidth, kBottom, hdc[0], 0, 0, SRCCOPY);
+            game.grayscale_ready = true;
         }
-        p = p->next;
+        BitBlt(hdc[0], 0, 0, kWidth, kBottom, hdc[4], 0, 0, SRCCOPY);
     }
     //draw score and time
-    OutputText(hdc[0], kTextsXY[0], game.player_name);
+    MRTextOut(hdc[0], kTextsXY[0], game.player_name);
     _itow_s(game.score, buffer, 10);
-    OutputText(hdc[0], kTextsXY[1], buffer);
+    MRTextOut(hdc[0], kTextsXY[1], buffer);
     _itow_s(game.time_left, buffer, 10);
-    OutputText(hdc[0], kTextsXY[2], buffer);
-    //draw player
-    Transparent(hdc[0], player.x, player.y, hdc[1], kPlayer[player.direction]);
+    MRTextOut(hdc[0], kTextsXY[2], buffer);
     //draw buttons
-    if (!game.paused)
-        PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[5]); //Pause
+    if (!game.paused && !game.button_on_click)
+        MRBitBlt(hdc[0], kButtonsXY[0], hdc[1], kButtons[5]); //Pause
     if (game.button_on_click)
-        PutImage(hdc[0], kButtonsXY[game.button_focus], hdc[1], kButtons[game.button_focus]);
+        MRBitBlt(hdc[0], kButtonsXY[game.button_focus], hdc[1], kButtons[game.button_focus]);
     if (game.paused && game.button_on_click && game.button_focus == 0)
-        PutImage(hdc[0], kButtonsXY[0], hdc[1], kButtons[4]); //Start on click
+        MRBitBlt(hdc[0], kButtonsXY[0], hdc[1], kButtons[4]); //Start on click
     EndBatchDraw();
 }
 
@@ -126,8 +136,9 @@ void GetAndDispatchCommand(Game &game, Player &player) {
         player.SetDirection(DOWN);
     if (GetAsyncKeyState(VK_SPACE) & 0x8000)
         game.PickMushroom();
-    if (GetAsyncKeyState(VK_RETURN) & 0x8000)
-        game.paused = !game.paused;
+    if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
+        game.HandleReturnKey();
+    }
     MOUSEMSG message;
     if (MouseHit()) {
         message = GetMouseMsg();
@@ -146,12 +157,14 @@ void GetAndDispatchCommand(Game &game, Player &player) {
                 switch (game.button_focus) {
                     case 0:
                         game.paused = !game.paused;
+                        game.grayscale_ready = false;
                         break;
                     case 1:
                         SaveGameToFile(game, player);
                         break;
                     case 2:
                         game.ClearGrass();
+                        game.grayscale_ready = false;
                         break;
                     case 3:
                         game.ExitGame();

@@ -172,3 +172,23 @@ FILE *GetFilePtr(int mode) {
     }
     return fp;
 }
+
+void CreateGrayscaleBitmap(HDC hdc) {
+    PBITMAPINFO p = (PBITMAPINFO)LocalAlloc(LPTR, sizeof(BITMAPINFOHEADER) + (1 << 8) * sizeof(RGBQUAD));
+    p->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    p->bmiHeader.biWidth = kWidth;
+    p->bmiHeader.biHeight = kBottom;
+    p->bmiHeader.biPlanes = 1;
+    p->bmiHeader.biBitCount = 8;
+    p->bmiHeader.biCompression = BI_RGB;
+    p->bmiHeader.biSizeImage = p->bmiHeader.biWidth * p->bmiHeader.biHeight;
+    p->bmiHeader.biClrUsed = 1 << 8;
+    p->bmiHeader.biClrImportant = 0;
+    for (SIZE_T i = 0; i < 1 << 8; i++) {
+        p->bmiColors[i].rgbRed = (BYTE)i;
+        p->bmiColors[i].rgbGreen = (BYTE)i;
+        p->bmiColors[i].rgbBlue = (BYTE)i;
+    }
+    HBITMAP bitmap = CreateDIBSection(hdc, p, 0, DIB_RGB_COLORS, nullptr, 0);
+    SelectObject(hdc, bitmap);
+}

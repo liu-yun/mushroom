@@ -56,6 +56,7 @@ public:
     int button_focus;
     bool button_on_click;
     bool paused;
+    bool grayscale_ready;
     bool on_exit;
 
     Game();
@@ -64,11 +65,12 @@ public:
     void DeleteGrassById(int id);
     void ClearGrass();
     void PickMushroom();
-    void UpdateTimer();
+    void GameTimer();
     void GrassTimer();
     void SaveScoreToLeaderboard();
     void Timeout();
     void ExitGame();
+    void HandleReturnKey();
 };
 
 //dx = 0;  dy = -1; 上
@@ -90,20 +92,20 @@ public:
     void Reset();
 };
 
-inline int PutImage(HDC hdc, const int xy[], HDC hdcsrc, const int src[]) {
+inline int MRBitBlt(HDC hdc, const int xy[], HDC hdcsrc, const int src[]) {
     return BitBlt(hdc, xy[0], xy[1], src[2], src[3], hdcsrc, src[0], src[1], SRCCOPY);
 }
-inline int Transparent(HDC hdc, int x, int y, HDC hdcsrc, int w, int h, int xsrc, int ysrc) {
+inline int MRTransparentBlt(HDC hdc, int x, int y, HDC hdcsrc, int w, int h, int xsrc, int ysrc) {
     return GdiTransparentBlt(hdc, x - w / 2, y - h / 2, w, h, hdcsrc, xsrc, ysrc, w, h, 0x0);
 }
-inline int Transparent(HDC hdc, int x, int y, HDC hdcsrc, const int src[]) {
+inline int MRTransparentBlt(HDC hdc, int x, int y, HDC hdcsrc, const int src[]) {
     return GdiTransparentBlt(hdc, x - src[2] / 2, y - src[3] / 2, src[2], src[3], hdcsrc, src[0], src[1], src[2], src[3], 0x0);
 }
-inline int OutputText(HDC hdc, const int t[], wchar_t str[]) {
-    return ExtTextOut(hdc, t[0], t[1], 0, nullptr, str, wcslen(str), 0);
+inline int MRTextOut(HDC hdc, const int t[], wchar_t str[]) {
+    return ExtTextOut(hdc, t[0], t[1], 0, nullptr, str, wcslen(str), nullptr);
 }
-inline int OutputText(HDC hdc, int x, int y, wchar_t str[]) {
-    return ExtTextOut(hdc, x, y, 0, nullptr, str, wcslen(str), 0);
+inline int MRTextOut(HDC hdc, int x, int y, wchar_t str[]) {
+    return ExtTextOut(hdc, x, y, 0, nullptr, str, wcslen(str), nullptr);
 }
 inline int ErrorBox(const wchar_t str[]) {
     return MessageBox(GetHWnd(), str, kMushroom, MB_ICONERROR | MB_OK | MB_DEFBUTTON1);
@@ -125,6 +127,7 @@ bool OnInitInputDialog(HWND hWnd);
 bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]);
 void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]);
 FILE *GetFilePtr(int mode);
+void CreateGrayscaleBitmap(HDC hdc);
 extern wchar_t temp_name[11]; extern int temp_num[5];
 
 void InitScene(IMAGE *images, HDC hdc[]);
