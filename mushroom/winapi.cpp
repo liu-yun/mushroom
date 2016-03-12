@@ -63,13 +63,15 @@ bool OnInitInputDialog(HWND hDlg) {
     if (!InitCommonControlsEx(&iccx))
         return false;
 
-    const int kRanges[4][2] = { { 1,60 },{ 1,6 },{ 1,5 },{ 1,10 } };
+    const int kRanges[4][2] = { { 1,3600 },{ 1,12 },{ 1,11 },{ 1,10 } };
+    const int kDefaults[4] = { 60,4,1,2 };
     for (int i = 0; i < 4; i++) {
         HWND hUpdown = CreateWindowEx(0, UPDOWN_CLASS, nullptr,
             WS_CHILD | WS_VISIBLE | UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_SETBUDDYINT | UDS_WRAP,
             0, 0, 0, 0, hDlg, nullptr, GetModuleHandle(nullptr), nullptr);
         SendMessage(hUpdown, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_EDIT2 + i), 0);
         SendMessage(hUpdown, UDM_SETRANGE32, kRanges[i][0], kRanges[i][1]);
+        SetDlgItemInt(hDlg, IDC_EDIT2 + i, kDefaults[i], 0);
     }
 
     HWND hTrack = CreateWindowEx(0, TRACKBAR_CLASS, nullptr,
@@ -80,9 +82,6 @@ bool OnInitInputDialog(HWND hDlg) {
     SendMessage(hTrack, TBM_SETBUDDY, 1, (LPARAM)GetDlgItem(hDlg, IDC_STATIC1));
     SendMessage(hTrack, TBM_SETBUDDY, 0, (LPARAM)GetDlgItem(hDlg, IDC_STATIC2));
 
-    const int kDefaults[4] = { 60,4,1,2 };
-    for (int i = 0; i < 4; i++)
-        SetDlgItemInt(hDlg, IDC_EDIT2 + i, kDefaults[i], 0);
     return true;
 }
 
@@ -110,7 +109,7 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     }
 
     wchar_t path[260];
-    GetModuleFileName(nullptr, path, sizeof path);
+    GetModuleFileName(nullptr, path, sizeof path / sizeof(wchar_t));
     PathRemoveFileSpec(path);
     wcscat_s(path, L"\\leaderboard.txt");
     FILE *fp;
@@ -123,7 +122,7 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     item.iSubItem = 0;
     item.state = 0;
     for (int i = 0; !feof(fp) && i < 50; i++) {
-        fwscanf_s(fp, L"%s\t%s\t%s\n", &data[i][0], sizeof data[i][0], &data[i][1], sizeof data[i][1], &data[i][2], sizeof data[i][2]);
+        fwscanf_s(fp, L"%s\t%s\t%s\n", &data[i][0], sizeof data[i][0] / sizeof(wchar_t), &data[i][1], sizeof data[i][1] / sizeof(wchar_t), &data[i][2], sizeof data[i][2] / sizeof(wchar_t));
         item.pszText = data[i][0];
         item.iItem = i;
         ListView_InsertItem(hListview, &item);
@@ -148,7 +147,7 @@ FILE *GetFilePtr(int mode) {
     ofn.hwndOwner = GetHWnd();
     ofn.lpstrFile = file;
     ofn.lpstrFile[0] = '\0';
-    ofn.nMaxFile = sizeof file;
+    ofn.nMaxFile = sizeof file / sizeof(wchar_t);
     ofn.lpstrFilter = L"所有文件(*.*)\0*.*\0采蘑菇存档文件(*.mrs)\0*.mrs\0";
     ofn.nFilterIndex = 2;
     //ofn.lpstrFileTitle = NULL;

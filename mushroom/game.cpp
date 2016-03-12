@@ -119,7 +119,7 @@ void Game::GrassTimer() {
 
 void Game::SaveScoreToLeaderboard() {
     wchar_t path[260];
-    GetModuleFileName(nullptr, path, sizeof path);
+    GetModuleFileName(nullptr, path, sizeof path / sizeof(wchar_t));
     PathRemoveFileSpec(path);
     wcscat_s(path, L"\\leaderboard.txt");
     FILE *fp;
@@ -131,7 +131,7 @@ void Game::SaveScoreToLeaderboard() {
     tm tstruct;
     localtime_s(&tstruct, &now);
     wchar_t buffer[100];
-    wcsftime(buffer, sizeof buffer, L"%Y/%m/%d", &tstruct);
+    wcsftime(buffer, sizeof buffer / sizeof(wchar_t), L"%Y/%m/%d", &tstruct);
     fwprintf_s(fp, L"%s\t%d\t%s\n", player_name, score, buffer);
     fclose(fp);
 }
