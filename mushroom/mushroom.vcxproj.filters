@@ -63,10 +63,10 @@
     <Image Include="res\ui.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="C:\Users\Yun\Desktop\res\data.bmp">
+    <Image Include="res\menu.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="res\menu.bmp">
+    <Image Include="res\imageres.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

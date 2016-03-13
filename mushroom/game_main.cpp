@@ -28,8 +28,9 @@ bool InitNewGame(Game &game, Player &player) {
     player.speed = temp_num[4];
     player.Reset();
     game.InitGrass();
-    game.paused = true;
+    game.score = 0;
     game.HandleReturnKey();
+    game.paused = true;
     return true;
 }
 

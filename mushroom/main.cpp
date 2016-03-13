@@ -25,9 +25,9 @@ void InitScene(IMAGE *images, HDC hdc[]) {
     f.lfQuality = CLEARTYPE_QUALITY;
     settextstyle(&f);
 
-    loadimage(images + 0, L"Image", MAKEINTRESOURCE(IDR_IMAGE1)); //ImageRes
-    loadimage(images + 1, L"Image", MAKEINTRESOURCE(IDR_UI)); //UI
-    loadimage(images + 2, L"Image", MAKEINTRESOURCE(IDR_MENU)); //Menu
+    loadimage(images + 0, L"IMAGE", MAKEINTRESOURCE(IDR_IMAGERES));
+    loadimage(images + 1, L"IMAGE", MAKEINTRESOURCE(IDR_UI));
+    loadimage(images + 2, L"IMAGE", MAKEINTRESOURCE(IDR_MENU));
     hdc[0] = GetImageHDC();
     hdc[1] = GetImageHDC(images);
     hdc[2] = GetImageHDC(images + 1);

@@ -163,7 +163,7 @@
     <ResourceCompile Include="mushroom.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\Yun\Desktop\res\data.bmp" />
+    <Image Include="res\imageres.bmp" />
     <Image Include="mushroom.ico" />
     <Image Include="res\menu.bmp" />
     <Image Include="res\ui.bmp" />
