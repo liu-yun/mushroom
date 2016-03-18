@@ -183,6 +183,9 @@ int ShowExitGameDialog(int score, bool timeout) {
 }
 
 void ShowHelpDialog() {
+    wchar_t buffer[30], copyright[70];
+    mbstowcs_s(nullptr, buffer, __DATE__ " " __TIME__, sizeof buffer / sizeof(wchar_t));
+    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s)\n版权所有 2016 保留所有权利。", kVersion, buffer);
     TASKDIALOGCONFIG config = { 0 };
     config.cbSize = sizeof config;
     config.hInstance = GetModuleHandle(nullptr);
@@ -195,7 +198,8 @@ void ShowHelpDialog() {
     config.pszContent = L"使用 ↑↓→← / WASD 键控制移动方向，按空格键采蘑菇。\n踩到炸弹后有 0.5 秒的躲避时间。";
     config.pszExpandedControlText = L"？？？";
     config.pszExpandedInformation = L"？？？";
-    config.pszFooter = L"版本 0.1.0\n版权所有 2016 保留所有权利。";
+    config.pszFooterIcon = TD_INFORMATION_ICON;
+    config.pszFooter = copyright;
     TaskDialogIndirect(&config, nullptr, nullptr, nullptr);
 }
 

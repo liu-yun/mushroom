@@ -17,6 +17,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "lib/graphics.h"
 #include "resource.h"
 
+const wchar_t kVersion[8] = L"0.1.0.0";
 const int kWidth = 800;
 const int kHeight = 600;
 const int kBottom = 490;
