@@ -12,6 +12,7 @@ int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) 
                     for (int i = 0; i < 4; i++)
                         temp_num[i] = GetDlgItemInt(hDlg, IDC_EDIT2 + i, nullptr, 0);
                     temp_num[4] = SendMessage(GetDlgItem(hDlg, IDC_TRACKBAR1), TBM_GETPOS, 0, 0);
+                    temp_num[5] = SendMessage(GetDlgItem(hDlg, IDC_COMBOBOXEX1), CB_GETCURSEL, 0, 0);
                     EndDialog(hDlg, LOWORD(wParam));
                     return 1;
                 case IDCANCEL:
@@ -19,6 +20,9 @@ int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) 
                     return 1;
             }
             return 0;
+        case WM_CLOSE:
+            ImageList_Destroy((HIMAGELIST)GetWindowLongPtr(hDlg, GWLP_USERDATA));
+            DestroyWindow(hDlg);
     }
     return 0;
 }
@@ -50,7 +54,11 @@ int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             }
             return 0;
         case WM_NOTIFY:
-            HandleSubitems(lParam, data);
+            NMLVDISPINFO* p;
+            if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
+                p = (NMLVDISPINFO*)lParam;
+                p->item.pszText = data[p->item.iItem][p->item.iSubItem];
+            }
             return 1;
     }
     return 0;
@@ -59,7 +67,7 @@ int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 bool OnInitInputDialog(HWND hDlg) {
     INITCOMMONCONTROLSEX iccx;
     iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
-    iccx.dwICC = ICC_UPDOWN_CLASS | ICC_PROGRESS_CLASS;
+    iccx.dwICC = ICC_UPDOWN_CLASS | ICC_PROGRESS_CLASS | ICC_USEREX_CLASSES;
     if (!InitCommonControlsEx(&iccx))
         return false;
 
@@ -76,11 +84,33 @@ bool OnInitInputDialog(HWND hDlg) {
 
     HWND hTrack = CreateWindowEx(0, TRACKBAR_CLASS, nullptr,
         WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | TBS_TOOLTIPS,
-        125, 195, 85, 30, hDlg, (HMENU)IDC_TRACKBAR1, GetModuleHandle(nullptr), nullptr);
-    SendMessage(hTrack, TBM_SETRANGE, 1, MAKELONG(1, 4));
+        130, 195, 80, 30, hDlg, (HMENU)IDC_TRACKBAR1, GetModuleHandle(nullptr), nullptr);
+    SendMessage(hTrack, TBM_SETRANGE, 1, MAKELONG(1, 3));
     SendMessage(hTrack, TBM_SETPOS, 1, 1);
     SendMessage(hTrack, TBM_SETBUDDY, 1, (LPARAM)GetDlgItem(hDlg, IDC_STATIC1));
     SendMessage(hTrack, TBM_SETBUDDY, 0, (LPARAM)GetDlgItem(hDlg, IDC_STATIC2));
+
+    const int skin_icons[] = { IDI_MUSHROOM,  IDI_MUSHROOM };
+    int skin_num = _countof(skin_icons);
+    HWND hComboEx = CreateWindowEx(0, WC_COMBOBOXEX, nullptr,
+        CBS_DROPDOWNLIST | WS_CHILD | WS_TABSTOP | WS_VISIBLE,
+        120, 230, 100, 90, hDlg, (HMENU)IDC_COMBOBOXEX1, GetModuleHandle(nullptr), nullptr);
+    HIMAGELIST hImageList = ImageList_Create(16, 16, ILC_MASK | ILC_COLOR32, skin_num, 0);
+    for (int i = 0; i < skin_num; i++)
+        ImageList_AddIcon(hImageList, LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(skin_icons[i])));
+    SendMessage(hComboEx, CBEM_SETIMAGELIST, 0, (LPARAM)hImageList);
+    wchar_t kSkinNames[2][10] = { L"Ball",L"Umaru" };
+    for (int i = 0; i < skin_num; i++) {
+        COMBOBOXEXITEM item = { 0 };
+        item.mask = CBEIF_TEXT | CBEIF_IMAGE | CBEIF_SELECTEDIMAGE;
+        item.iItem = i;
+        item.iImage = i;
+        item.iSelectedImage = i;
+        item.pszText = kSkinNames[i];
+        SendMessage(hComboEx, CBEM_INSERTITEM, 0, (LPARAM)&item);
+    }
+    SendMessage(hComboEx, CB_SETCURSEL, 0, 0);
+    SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)hImageList);
 
     return true;
 }
@@ -94,7 +124,7 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
 
     HWND hListview = CreateWindowEx(0, WC_LISTVIEW, nullptr,
         WS_CHILD | LVS_REPORT | WS_VISIBLE,
-        16, 16, 248, 240, hDlg, (HMENU)IDC_LISTVIEW1, GetModuleHandle(nullptr), nullptr);
+        16, 16, 248, 270, hDlg, (HMENU)IDC_LISTVIEW1, GetModuleHandle(nullptr), nullptr);
 
     wchar_t kHeaders[3][3] = { L"玩家",L"分数",L"日期" };
     const int kColumnWidth[3] = { 100,50,80 };
@@ -131,12 +161,42 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     return true;
 }
 
-void HandleSubitems(LPARAM lParam, wchar_t data[50][3][11]) {
-    NMLVDISPINFO* p;
-    if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
-        p = (NMLVDISPINFO*)lParam;
-        p->item.pszText = data[p->item.iItem][p->item.iSubItem];
-    }
+int ShowExitGameDialog(int score, bool timeout) {
+    int selected = 0;
+    wchar_t buffer[30];
+    swprintf_s(buffer, L"分数: %d\n是否记录分数?", score);
+    TASKDIALOGCONFIG config = { 0 };
+    TASKDIALOG_BUTTON buttons[] = { { IDYES,L"记录" },{ IDNO,L"不记录" } };
+    config.cbSize = sizeof config;
+    config.hInstance = GetModuleHandle(nullptr);
+    config.hwndParent = GetHWnd();
+    config.dwCommonButtons = timeout ? 0 : TDCBF_CANCEL_BUTTON;
+    config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_USE_COMMAND_LINKS;
+    config.pButtons = buttons;
+    config.cButtons = _countof(buttons);
+    config.pszWindowTitle = kMushroom;
+    config.pszMainIcon = TD_WARNING_ICON;
+    config.pszMainInstruction = timeout ? L"游戏结束！" : L"退出";
+    config.pszContent = buffer;
+    TaskDialogIndirect(&config, &selected, nullptr, nullptr);
+    return selected;
+}
+
+void ShowHelpDialog() {
+    TASKDIALOGCONFIG config = { 0 };
+    config.cbSize = sizeof config;
+    config.hInstance = GetModuleHandle(nullptr);
+    config.hwndParent = GetHWnd();
+    config.dwCommonButtons = TDCBF_OK_BUTTON;
+    config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION /*| TDF_EXPAND_FOOTER_AREA*/;
+    config.pszWindowTitle = L"帮助";
+    config.pszMainIcon = MAKEINTRESOURCE(IDI_MUSHROOM);
+    config.pszMainInstruction = L"这是一个有趣的采蘑菇游戏！";
+    config.pszContent = L"使用 ↑↓→← / WASD 键控制移动方向，按空格键采蘑菇。\n踩到炸弹后有 0.5 秒的躲避时间。";
+    config.pszExpandedControlText = L"？？？";
+    config.pszExpandedInformation = L"？？？";
+    config.pszFooter = L"版本 0.1.0\n版权所有 2016 保留所有权利。";
+    TaskDialogIndirect(&config, nullptr, nullptr, nullptr);
 }
 
 FILE *GetFilePtr(int mode) {

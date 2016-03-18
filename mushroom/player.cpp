@@ -1,21 +1,22 @@
 ﻿#include "mushroom.h"
 
 Player::Player() {
-    x = kWidth / 2 - kPlayerSize;
-    y = kBottom - kPlayerSize - 1;
+    skin = 0;
+    x = kWidth / 2 - kPlayerSize[skin];
+    y = kBottom - kPlayerSize[skin] - 1;
     speed = 2;
     SetDirection(UP);
 }
 
 void Player::Move() {
-    if (x <= kPlayerSize || y <= kPlayerSize || x >= kWidth - kPlayerSize || y >= kBottom - kPlayerSize) {
+    if (x <= kPlayerSize[skin] || y <= kPlayerSize[skin] || x >= kWidth - kPlayerSize[skin] || y >= kBottom - kPlayerSize[skin]) {
         dx = -dx;
         dy = -dy;
         direction += direction > 1 ? -2 : 2;
-        x = x <= kPlayerSize ? kPlayerSize + 1 : x;
-        y = y <= kPlayerSize ? kPlayerSize + 1 : y;
-        x = x >= kWidth - kPlayerSize ? kWidth - kPlayerSize - 1 : x;
-        y = y >= kBottom - kPlayerSize ? kBottom - kPlayerSize - 1 : y;
+        x = x <= kPlayerSize[skin] ? kPlayerSize[skin] + 1 : x;
+        y = y <= kPlayerSize[skin] ? kPlayerSize[skin] + 1 : y;
+        x = x >= kWidth - kPlayerSize[skin] ? kWidth - kPlayerSize[skin] - 1 : x;
+        y = y >= kBottom - kPlayerSize[skin] ? kBottom - kPlayerSize[skin] - 1 : y;
     }
     x += speed*dx;
     y += speed*dy;
@@ -46,7 +47,7 @@ void Player::SetDirection(Direction d) {
 }
 
 void Player::Reset() {
-    x = kWidth / 2 - kPlayerSize;
-    y = kBottom - kPlayerSize - 1;
+    x = kWidth / 2 - kPlayerSize[skin];
+    y = kBottom - kPlayerSize[skin] - 1;
     SetDirection(UP);
 }

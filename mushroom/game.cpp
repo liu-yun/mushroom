@@ -78,28 +78,18 @@ void Game::PickMushroom() {
         return;
     grass_focus->picked = true;
     grass_focus->time_picked = clock();
-    switch (grass_focus->type) {
-        case MUSHROOM:
-            score += grass_focus->score;
-            break;
-        case BOMB:
-            score -= grass_focus->score;
-            break;
-        case NOTHING:
-            break;
-        default:
-            break;
-    }
+    if (grass_focus->type == MUSHROOM)
+        score += grass_focus->score;
 }
 
 void Game::GameTimer() {
     static clock_t old_clock = clock();
     if (clock() - old_clock >= 1000) {
-        time_left--;
         old_clock = clock();
+        time_left--;
     }
     if (time_left == -1)
-        Timeout();
+        ExitGame(true);
 }
 
 void Game::GrassTimer() {
@@ -111,8 +101,16 @@ void Game::GrassTimer() {
 
     GrassNode *p = h;
     while (p) {
-        if (p->next && p->next->picked && clock() - p->next->time_picked > 2 * 1000)
-            DeleteGrassById(p->next->id);
+        if (p->next && p->next->picked) {
+            if (clock() - p->next->time_picked >= 2 * 1000) {
+                DeleteGrassById(p->next->id);
+            }
+            if (grass_focus && grass_focus->id == p->next->id && p->next->type == BOMB && !p->next->exploded && clock() - p->next->time_picked >= 5 * 100) {
+                p->next->time_picked = clock();
+                p->next->exploded = true;
+                score -= grass_focus->score;
+            }
+        }
         p = p->next;
     }
 }
@@ -136,23 +134,8 @@ void Game::SaveScoreToLeaderboard() {
     fclose(fp);
 }
 
-void Game::Timeout() {
-    wchar_t buffer[50];
-    swprintf_s(buffer, L"游戏结束！\n分数: %d\n是否记录分数？", score);
-    switch (YesNoBox(buffer)) {
-        case IDYES:
-            SaveScoreToLeaderboard();
-        case IDNO:
-            on_exit = 1;
-            ClearGrass();
-            break;
-    }
-}
-
-void Game::ExitGame() {
-    wchar_t buffer[50];
-    swprintf_s(buffer, L"分数: %d\n是否退出并记录分数？\n点击“取消”可返回。", score);
-    switch (YesNoCancelBox(buffer)) {
+void Game::ExitGame(bool timeout) {
+    switch (ShowExitGameDialog(score, timeout)) {
         case IDYES:
             SaveScoreToLeaderboard();
         case IDNO:

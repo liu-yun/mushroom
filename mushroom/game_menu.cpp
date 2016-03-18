@@ -10,16 +10,7 @@ void GameMenu(Game &game, Player &player, HDC hdc[]) {
 
 void DrawMenuGraphic(HDC hdc[], Game &game) {
     const int kMenuItemsXY[5][2] = { { 430,180 },{ 430,250 },{ 430,320 },{ 430,390 },{ 430,460 } };
-    const int kMenuItems[10][4] = { { 252,465,250,40 },
-    { 252,588,250,40 },
-    { 1,465,250,40 },
-    { 252,506,250,40 },
-    { 1,547,250,40 },
-    { 1,506,250,40 },
-    { 252,547,250,40 },
-    { 1,588,250,40 },
-    { 1,629,250,40 },
-    { 252,629,250,40 } };
+    const int kMenuItems[10][4] = { { 252,124,250,40 },{ 1,124,250,40 },{ 252,165,250,40 },{ 252,83,250,40 },{ 133,1,250,40 },{ 384,1,250,40 },{ 252,42,250,40 },{ 1,83,250,40 },{ 1,42,250,40 },{ 1,165,250,40 } };
     BeginBatchDraw();
     BitBlt(hdc[0], 0, 0, kWidth, kHeight, hdc[3], 0, 0, SRCCOPY);
     if (game.button_focus != -1 && !game.button_on_click)
@@ -62,7 +53,7 @@ void GetAndDispatchMenuCommand(Game &game, Player &player, HDC hdc[]) {
                         DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LEADERBOARDDIALOG), GetHWnd(), LeaderboardDialog);
                         break;
                     case 3:
-                        DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_HELPDIALOG), GetHWnd(), HelpDialog);
+                        ShowHelpDialog();
                         break;
                     case 4:
                         closegraph();

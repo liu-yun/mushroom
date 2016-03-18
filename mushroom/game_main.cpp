@@ -14,7 +14,7 @@ void GameMain(Game &game, Player &player, HDC hdc[]) {
     }
 }
 
-wchar_t temp_name[11]; int temp_num[5];
+wchar_t temp_name[11]; int temp_num[6];
 bool InitNewGame(Game &game, Player &player) {
     if (DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_INPUTDIALOG), GetHWnd(), InputDialog) == IDCANCEL)
         return false;
@@ -26,6 +26,7 @@ bool InitNewGame(Game &game, Player &player) {
     game.num_at_a_time = temp_num[2];
     game.interval = temp_num[3];
     player.speed = temp_num[4];
+    player.skin = temp_num[5];
     player.Reset();
     game.InitGrass();
     game.score = 0;
@@ -39,33 +40,12 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
     const int kTextsXY[3][2] = { { 433,537 },{ 573,537 },{ 715,537 } };
     //Buttons:Start, Save, Clear, Quit X, Y
     const int kButtonsXY[4][2] = { { 14,505 },{ 94,505 },{ 174,505 },{ 254,505 } };
-    const int kButtons[6][4] = { { 465,1,80,80 },
-    { 163,92,80,80 },
-    { 1,92,80,80 },
-    { 546,1,80,80 },
-    { 82,92,80,80 },
-    { 244,92,80,80 } };
-    const int kPlayer[4][4] = { { 1,1,32,32 },
-    { 34,1,32,32 },
-    { 67,1,32,32 },
-    { 100,1,32,32 } };
-    const int kMushrooms[9][4] = { { 177,1,64,90 },
-    { 242,1,65,90 },
-    { 133,1,43,90 },
-    { 308,1,77,86 },
-    { 325,92,89,83 },
-    { 509,92,94,90 },
-    { 415,92,93,80 },
-    { 604,92,101,90 },
-    { 386,1,78,90 } };
-    const int kGrass[3][4] = { { 182,324,187,140 },
-    { 110,183,108,140 },
-    { 1,324,180,140 } };
-    const int kGrassHighlight[3][4] = { { 370,324,187,140 },
-    { 1,183,108,140 },
-    { 477,183,180,140 } };
-    const int kBomb[2][4] = { { 331,183,145,100 },
-    { 219,183,111,103 } };
+    const int kButtons[6][4] = { { 487,246,80,80 },{ 1,327,80,80 },{ 406,246,80,80 },{ 325,246,80,80 },{ 244,246,80,80 },{ 568,246,80,80 } };
+    const int kPlayer[8][4] = { { 34,1,32,32 },{ 100,1,32,32 },{ 1,1,32,32 },{ 67,1,32,32 },{ 565,165,67,80 },{ 503,165,61,80 },{ 95,246,67,80 },{ 163,246,80,80 } };
+    const int kMushrooms[9][4] = { { 329,327,64,90 },{ 1,418,65,90 },{ 591,327,43,90 },{ 172,327,77,86 },{ 82,327,89,83 },{ 496,327,94,90 },{ 1,246,93,80 },{ 394,327,101,90 },{ 250,327,78,90 } };
+    const int kGrass[3][4] = { { 1,559,187,140 },{ 325,418,108,140 },{ 434,418,180,140 } };
+    const int kGrassHighlight[3][4] = { { 189,559,187,140 },{ 558,559,108,140 },{ 377,559,180,140 } };
+    const int kBomb[2][4] = { { 67,418,145,100 },{ 213,418,111,103 } };
     const int kGrassX[4] = { 100,300,500,700 };
     const int kGrassY[3] = { 81,243,405 };
     wchar_t buffer[11];
@@ -86,7 +66,7 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
                         MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kMushrooms[p->score - 1]);
                         break;
                     case BOMB:
-                        MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kBomb[0]);
+                        MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1], kBomb[p->exploded ? 1 : 0]);
                         break;
                     case NOTHING:
                         break;
@@ -99,7 +79,7 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
             p = p->next;
         }
         //draw player
-        MRTransparentBlt(hdc[0], player.x, player.y, hdc[1], kPlayer[player.direction]);
+        MRTransparentBlt(hdc[0], player.x, player.y, hdc[1], kPlayer[player.skin * 4 + player.direction]);
     }
     //grayscale when paused
     if (game.paused) {
@@ -167,7 +147,7 @@ void GetAndDispatchCommand(Game &game, Player &player) {
                         game.grayscale_ready = false;
                         break;
                     case 3:
-                        game.ExitGame();
+                        game.ExitGame(false);
                         break;
                     default:
                         break;

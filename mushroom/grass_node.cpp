@@ -3,6 +3,7 @@
 GrassNode::GrassNode(int i) : id(i) {
     srand(clock());
     picked = false;
+    exploded = false;
     time_picked = 0;
     next = nullptr;
     if (id == -1) {
