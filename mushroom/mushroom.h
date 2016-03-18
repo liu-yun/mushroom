@@ -17,6 +17,11 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "lib/graphics.h"
 #include "resource.h"
 
+#ifdef _DEBUG
+const wchar_t kBuildType[] = L"Debug";
+#else
+const wchar_t kBuildType[] = L"Release";
+#endif
 const wchar_t kVersion[8] = L"0.1.0.0";
 const int kWidth = 800;
 const int kHeight = 600;

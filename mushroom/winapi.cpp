@@ -185,7 +185,7 @@ int ShowExitGameDialog(int score, bool timeout) {
 void ShowHelpDialog() {
     wchar_t buffer[30], copyright[70];
     mbstowcs_s(nullptr, buffer, __DATE__ " " __TIME__, sizeof buffer / sizeof(wchar_t));
-    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s)\n版权所有 2016 保留所有权利。", kVersion, buffer);
+    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n版权所有 2016 保留所有权利。", kVersion, buffer, kBuildType);
     TASKDIALOGCONFIG config = { 0 };
     config.cbSize = sizeof config;
     config.hInstance = GetModuleHandle(nullptr);
