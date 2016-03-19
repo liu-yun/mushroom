@@ -11,7 +11,6 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <time.h>
 #include <stdio.h>
 #include <math.h>
-#include <SDKDDKVer.h>
 #include <Shlwapi.h>
 
 #include "lib/graphics.h"
@@ -22,7 +21,7 @@ const wchar_t kBuildType[] = L"Debug";
 #else
 const wchar_t kBuildType[] = L"Release";
 #endif
-const wchar_t kVersion[8] = L"0.1.0.0";
+const wchar_t kVersion[] = L"0.2.0.0";
 const int kWidth = 800;
 const int kHeight = 600;
 const int kBottom = 490;

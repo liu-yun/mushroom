@@ -83,9 +83,9 @@ void Game::PickMushroom() {
 }
 
 void Game::GameTimer() {
-    static clock_t old_clock = clock();
-    if (clock() - old_clock >= 1000) {
-        old_clock = clock();
+    static clock_t old = clock();
+    if (clock() - old >= 1000) {
+        old = clock();
         time_left--;
     }
     if (time_left == -1)
@@ -93,9 +93,9 @@ void Game::GameTimer() {
 }
 
 void Game::GrassTimer() {
-    static clock_t old_clock = clock();
-    if (clock() - old_clock >= interval * 1000) {
-        old_clock = clock();
+    static clock_t old = clock();
+    if (clock() - old >= interval * 1000) {
+        old = clock();
         NewGrass();
     }
 
@@ -148,9 +148,9 @@ void Game::ExitGame(bool timeout) {
 }
 
 void Game::HandleReturnKey() {
-    static clock_t old_clock = clock();
-    if (clock() - old_clock >= 200) {
-        old_clock = clock();
+    static clock_t old = clock();
+    if (clock() - old >= 200) {
+        old = clock();
         paused = !paused;
         grayscale_ready = false;
     }

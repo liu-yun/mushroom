@@ -78,12 +78,12 @@ bool LoadGameFromFile(Game &game, Player &player) {
 }
 
 void SleepMs(int ms) {
-    static clock_t oldclock = clock();
-    oldclock += ms;
-    if (clock() > oldclock) {
-        oldclock = clock();
+    static clock_t old = clock();
+    old += ms;
+    if (clock() > old) {
+        old = clock();
         return;
     }
-    while (clock() < oldclock)
+    while (clock() < old)
         Sleep(1);
 }
