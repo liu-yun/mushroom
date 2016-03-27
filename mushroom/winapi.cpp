@@ -48,20 +48,47 @@ int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             OnInitLeaderboardDialog(hDlg, data);
             return 1;
         case WM_COMMAND:
-            if (LOWORD(wParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK || IDCANCEL) {
                 EndDialog(hDlg, LOWORD(wParam));
                 return 1;
             }
-            return 0;
         case WM_NOTIFY:
             NMLVDISPINFO* p;
             if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
                 p = (NMLVDISPINFO*)lParam;
-                p->item.pszText = data[p->item.iItem][p->item.iSubItem];
+                p->item.pszText = data[p->item.iItem][p->item.iSubItem - 1];
+            }
+            if (((LPNMHDR)lParam)->code == LVN_COLUMNCLICK) {
+                static bool descending = false;
+                static int n = ListView_GetItemCount(GetDlgItem(hDlg, IDC_LISTVIEW1));
+                LPNMLISTVIEW pl = (LPNMLISTVIEW)lParam;
+                SortData(data, n, pl->iSubItem - 1, !descending);
+                descending = !descending;
+                ListView_RedrawItems(GetDlgItem(hDlg, IDC_LISTVIEW1), 0, n);
             }
             return 1;
     }
     return 0;
+}
+
+void SortData(wchar_t data[50][3][11], int n, int item, bool descending) {
+    if (item != 1)
+        return;
+    wchar_t temp[3][11];
+    int a, b, i, j;
+    for (i = n - 1; i >= 1; i--) {
+        for (j = 0; j < i; j++) {
+            a = _wtoi(data[j][item]);
+            b = _wtoi(data[j + 1][item]);
+            if (descending ? a < b : a > b) {
+                for (int k = 0; k < 3; k++) {
+                    wcscpy_s(temp[k], data[j][k]);
+                    wcscpy_s(data[j][k], data[j + 1][k]);
+                    wcscpy_s(data[j + 1][k], temp[k]);
+                }
+            }
+        }
+    }
 }
 
 bool OnInitInputDialog(HWND hDlg) {
@@ -125,13 +152,14 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     HWND hListview = CreateWindowEx(0, WC_LISTVIEW, nullptr,
         WS_CHILD | LVS_REPORT | WS_VISIBLE,
         16, 16, 248, 270, hDlg, (HMENU)IDC_LISTVIEW1, GetModuleHandle(nullptr), nullptr);
+    ListView_SetExtendedListViewStyle(hListview, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP | LVS_EX_DOUBLEBUFFER);
 
-    wchar_t kHeaders[3][3] = { L"玩家",L"分数",L"日期" };
-    const int kColumnWidth[3] = { 100,50,80 };
+    wchar_t kHeaders[4][3] = { L"",L"玩家",L"分数",L"日期" };
+    const int kColumnWidth[4] = { 0,100,50,80 };
     LVCOLUMN column;
     column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;
     column.fmt = LVCFMT_LEFT;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         column.iSubItem = i;
         column.pszText = kHeaders[i];
         column.cx = kColumnWidth[i];
@@ -153,7 +181,7 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     item.state = 0;
     for (int i = 0; !feof(fp) && i < 50; i++) {
         fwscanf_s(fp, L"%s\t%s\t%s\n", &data[i][0], sizeof data[i][0] / sizeof(wchar_t), &data[i][1], sizeof data[i][1] / sizeof(wchar_t), &data[i][2], sizeof data[i][2] / sizeof(wchar_t));
-        item.pszText = data[i][0];
+        item.pszText = L"";
         item.iItem = i;
         ListView_InsertItem(hListview, &item);
     }
@@ -183,9 +211,9 @@ int ShowExitGameDialog(int score, bool timeout) {
 }
 
 void ShowHelpDialog() {
-    wchar_t buffer[30], copyright[70];
+    wchar_t buffer[30], copyright[110];
     mbstowcs_s(nullptr, buffer, __DATE__ " " __TIME__, sizeof buffer / sizeof(wchar_t));
-    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n版权所有 2016 保留所有权利。", kVersion, buffer, kBuildType);
+    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n© 2016 保留所有权利。\nPhoto credits © 2016 iStockphoto", kVersion, buffer, kBuildType);
     TASKDIALOGCONFIG config = { 0 };
     config.cbSize = sizeof config;
     config.hInstance = GetModuleHandle(nullptr);
