@@ -27,20 +27,6 @@ int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) 
     return 0;
 }
 
-int CALLBACK HelpDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-    switch (message) {
-        case WM_INITDIALOG:
-            return 1;
-        case WM_COMMAND:
-            if (LOWORD(wParam) == IDOK) {
-                EndDialog(hDlg, LOWORD(wParam));
-                return 1;
-            }
-            return 0;
-    }
-    return 0;
-}
-
 int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     static wchar_t data[50][3][11];
     switch (message) {
@@ -204,7 +190,7 @@ int ShowExitGameDialog(int score, bool timeout) {
     config.cButtons = _countof(buttons);
     config.pszWindowTitle = kMushroom;
     config.pszMainIcon = TD_WARNING_ICON;
-    config.pszMainInstruction = timeout ? L"游戏结束！" : L"退出";
+    config.pszMainInstruction = timeout ? L"游戏结束！" : L"退出游戏";
     config.pszContent = buffer;
     TaskDialogIndirect(&config, &selected, nullptr, nullptr);
     return selected;
@@ -213,7 +199,7 @@ int ShowExitGameDialog(int score, bool timeout) {
 void ShowHelpDialog() {
     wchar_t buffer[30], copyright[110];
     mbstowcs_s(nullptr, buffer, __DATE__ " " __TIME__, sizeof buffer / sizeof(wchar_t));
-    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n© 2016 保留所有权利。\nPhoto credits © 2016 iStockphoto", kVersion, buffer, kBuildType);
+    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n© 2016 刘云 15071018 保留所有权利。\nPhoto credits © 2016 iStockphoto", kVersion, buffer, kBuildType);
     TASKDIALOGCONFIG config = { 0 };
     config.cbSize = sizeof config;
     config.hInstance = GetModuleHandle(nullptr);
@@ -223,7 +209,7 @@ void ShowHelpDialog() {
     config.pszWindowTitle = L"帮助";
     config.pszMainIcon = MAKEINTRESOURCE(IDI_MUSHROOM);
     config.pszMainInstruction = L"这是一个有趣的采蘑菇游戏！";
-    config.pszContent = L"使用 ↑↓→← / WASD 键控制移动方向，按空格键采蘑菇。\n踩到炸弹后有 0.5 秒的躲避时间。";
+    config.pszContent = L"使用 ↑↓←→ / WASD 键控制移动方向，按空格键采蘑菇。\n踩到炸弹后有 0.5 秒的躲避时间。";
     config.pszExpandedControlText = L"？？？";
     config.pszExpandedInformation = L"？？？";
     config.pszFooterIcon = TD_INFORMATION_ICON;
@@ -232,30 +218,29 @@ void ShowHelpDialog() {
 }
 
 FILE *GetFilePtr(int mode) {
-    wchar_t file[260];
+    wchar_t file[260] = { 0 };
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof ofn);
     ofn.lStructSize = sizeof ofn;
     ofn.hwndOwner = GetHWnd();
     ofn.lpstrFile = file;
-    ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof file / sizeof(wchar_t);
     ofn.lpstrFilter = L"所有文件(*.*)\0*.*\0采蘑菇存档文件(*.mrs)\0*.mrs\0";
     ofn.nFilterIndex = 2;
-    //ofn.lpstrFileTitle = NULL;
-    //ofn.nMaxFileTitle = 0;
-    //ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST;
     FILE *fp = nullptr;
     switch (mode) {
         case 0:
-            ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+            ofn.Flags |= OFN_FILEMUSTEXIST;
+            ofn.lpstrTitle = L"载入游戏";
             if (GetOpenFileName(&ofn) == 1) {
                 _wfopen_s(&fp, file, L"rt+, ccs=UTF-8");
             }
             break;
         case 1:
-            ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+            ofn.Flags |= OFN_OVERWRITEPROMPT;
             ofn.lpstrDefExt = L"mrs";
+            ofn.lpstrTitle = L"保存游戏";
             if (GetSaveFileName(&ofn) == 1) {
                 _wfopen_s(&fp, file, L"wt+, ccs=UTF-8");
             }

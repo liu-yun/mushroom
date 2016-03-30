@@ -84,6 +84,8 @@ void Game::PickMushroom() {
 
 void Game::GameTimer() {
     static clock_t old = clock();
+    if (clock() - old >= 1000 * 2)
+        old = clock();
     if (clock() - old >= 1000) {
         old = clock();
         time_left--;
@@ -94,6 +96,9 @@ void Game::GameTimer() {
 
 void Game::GrassTimer() {
     static clock_t old = clock();
+    if (clock() - old >= interval * 1000 * 2) {
+        old = clock();
+    }
     if (clock() - old >= interval * 1000) {
         old = clock();
         NewGrass();

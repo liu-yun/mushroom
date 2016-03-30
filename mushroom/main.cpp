@@ -12,7 +12,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 void InitScene(IMAGE *images, HDC hdc[]) {
     initgraph(kWidth, kHeight);
-    SetWindowText(GetHWnd(), L"采蘑菇");
+    SetWindowText(GetHWnd(), L"采蘑菇 刘云 15071018");
     //Fix the blurry taskbar icon.
     HICON icon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_MUSHROOM));
     SendMessage(GetHWnd(), WM_SETICON, ICON_BIG, (LPARAM)icon);
@@ -61,6 +61,7 @@ bool LoadGameFromFile(Game &game, Player &player) {
     fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, sizeof game.player_name / sizeof(wchar_t), &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);
     fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &player.skin, &player.x, &player.y, &player.dx, &player.dy, &player.speed, &player.direction);
     game.paused = true;
+    game.grayscale_ready = false;
     game.h = new GrassNode(-1);
     GrassNode *p = game.h, *s;
     int temp_bool[2]; //C4477

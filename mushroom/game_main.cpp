@@ -32,6 +32,7 @@ bool InitNewGame(Game &game, Player &player) {
     game.score = 0;
     game.HandleReturnKey();
     game.paused = true;
+    game.grayscale_ready = false;
     return true;
 }
 

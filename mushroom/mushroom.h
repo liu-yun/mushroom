@@ -121,7 +121,6 @@ inline int InfoBox(const wchar_t str[]) {
 }
 
 int CALLBACK InputDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-int CALLBACK HelpDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void SortData(wchar_t data[50][3][11], int n, int item, bool descending);
 bool OnInitInputDialog(HWND hWnd);
