@@ -22,7 +22,7 @@
     <ProjectGuid>{2BD75E3B-80FC-47A9-8D5F-9CA9B9B0EBF0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>mushroom</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

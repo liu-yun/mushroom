@@ -81,6 +81,7 @@ public:
 //dx = 0;  dy = 1;  下
 //dx = -1; dy = 0;  左
 //dx = 1;  dy = 0;  右
+
 class Player {
 public:
     const int kPlayerSize[2] = { 16,40 };

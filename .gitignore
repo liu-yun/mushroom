@@ -279,4 +279,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-mushroom.VC.opendb
+
+*.VC.db
+*.VC.opendb
