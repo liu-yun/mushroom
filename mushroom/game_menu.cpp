@@ -50,7 +50,7 @@ void GetAndDispatchMenuCommand(Game &game, Player &player, HDC hdc[]) {
                             GameMain(game, player, hdc);
                         break;
                     case 2:
-                        DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LEADERBOARDDIALOG), GetHWnd(), LeaderboardDialog);
+                        DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_LEADERBOARDDIALOG), GetHWnd(), LeaderboardDialog);
                         break;
                     case 3:
                         ShowHelpDialog();
