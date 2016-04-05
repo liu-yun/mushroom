@@ -128,7 +128,7 @@ bool OnInitInputDialog(HWND hWnd);
 bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]);
 int ShowExitGameDialog(int score, bool timeout);
 void ShowHelpDialog();
-FILE *GetFilePtr(int mode);
+FILE *GetFilePtr(int mode, wchar_t* filename);
 void CreateGrayscaleBitmap(HDC hdc);
 void MRSetCursor(int focus);
 extern wchar_t temp_name[11]; extern int temp_num[6];

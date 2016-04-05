@@ -40,7 +40,9 @@ void InitScene(IMAGE *images, HDC hdc[]) {
 }
 
 void SaveGameToFile(Game &game, Player &player) {
-    FILE *fp = GetFilePtr(1);
+    wchar_t filename[30];
+    swprintf_s(filename, L"%s.mrs", game.player_name);
+    FILE *fp = GetFilePtr(1, filename);
     if (!fp)
         return;
     fwprintf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", game.player_name, game.time_left, game.score, game.grass_num, game.num_at_a_time, game.interval, game.last_id);
@@ -51,11 +53,13 @@ void SaveGameToFile(Game &game, Player &player) {
         p = p->next;
     }
     fclose(fp);
-    InfoBox(L"已保存");
+    wchar_t buffer[40];
+    swprintf_s(buffer, L"游戏已保存至 %s", filename);
+    InfoBox(buffer);
 }
 
 bool LoadGameFromFile(Game &game, Player &player) {
-    FILE *fp = GetFilePtr(0);
+    FILE *fp = GetFilePtr(0, nullptr);
     if (!fp)
         return false;
     fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, sizeof game.player_name / sizeof(wchar_t), &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);

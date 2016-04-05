@@ -217,24 +217,29 @@ void ShowHelpDialog() {
     TaskDialogIndirect(&config, nullptr, nullptr, nullptr);
 }
 
-FILE *GetFilePtr(int mode) {
-    wchar_t file[260] = { 0 };
+FILE *GetFilePtr(int mode, wchar_t* filename) {
+    wchar_t filepath[260] = { 0 };
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof ofn);
     ofn.lStructSize = sizeof ofn;
     ofn.hwndOwner = GetHWnd();
-    ofn.lpstrFile = file;
-    ofn.nMaxFile = sizeof file / sizeof(wchar_t);
+    ofn.lpstrFile = filepath;
+    ofn.nMaxFile = sizeof filepath / sizeof(wchar_t);
     ofn.lpstrFilter = L"所有文件(*.*)\0*.*\0采蘑菇存档文件(*.mrs)\0*.mrs\0";
     ofn.nFilterIndex = 2;
     ofn.Flags = OFN_PATHMUSTEXIST;
+    if (filename) {
+        wcscpy_s(filepath, filename);
+        ofn.lpstrFileTitle = filename;
+        ofn.nMaxFileTitle = 30;
+    }
     FILE *fp = nullptr;
     switch (mode) {
         case 0:
             ofn.Flags |= OFN_FILEMUSTEXIST;
             ofn.lpstrTitle = L"载入游戏";
             if (GetOpenFileName(&ofn) == 1) {
-                _wfopen_s(&fp, file, L"rt+, ccs=UTF-8");
+                _wfopen_s(&fp, filepath, L"rt+, ccs=UTF-8");
             }
             break;
         case 1:
@@ -242,7 +247,7 @@ FILE *GetFilePtr(int mode) {
             ofn.lpstrDefExt = L"mrs";
             ofn.lpstrTitle = L"保存游戏";
             if (GetSaveFileName(&ofn) == 1) {
-                _wfopen_s(&fp, file, L"wt+, ccs=UTF-8");
+                _wfopen_s(&fp, filepath, L"wt+, ccs=UTF-8");
             }
             break;
     }
