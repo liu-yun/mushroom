@@ -209,7 +209,7 @@ void ShowHelpDialog() {
     config.pszWindowTitle = L"帮助";
     config.pszMainIcon = MAKEINTRESOURCE(IDI_MUSHROOM);
     config.pszMainInstruction = L"这是一个有趣的采蘑菇游戏！";
-    config.pszContent = L"使用 ↑↓←→ / WASD 键控制移动方向，按空格键采蘑菇。\n踩到炸弹后有 0.5 秒的躲避时间。";
+    config.pszContent = L"使用 ↑↓←→ 或 WASD 键控制移动方向，按空格键尝试采蘑菇。\n采到蘑菇得分，采到炸弹减分。分数随机，范围在 1 到 9 之间。踩到炸弹后有 0.5 秒的躲避时间。\n点击清空按钮可将游戏区所有的草、蘑菇、炸弹清除。\n点击保存按钮可保存游戏状态。";
     config.pszExpandedControlText = L"？？？";
     config.pszExpandedInformation = L"？？？";
     config.pszFooterIcon = TD_INFORMATION_ICON;
