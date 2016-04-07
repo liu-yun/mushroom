@@ -11,7 +11,7 @@ GrassNode::GrassNode(int i) : id(i) {
         return;
     }
     type = rand() % 3;
-    grass_style = rand() % 3;
+    style = rand() % 3;
     score = rand() % 9 + 1;
     do {
         x = rand() % 4;

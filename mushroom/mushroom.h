@@ -22,10 +22,10 @@ const wchar_t kBuildType[] = L"Debug";
 const wchar_t kBuildType[] = L"Release";
 #endif
 const wchar_t kVersion[] = L"0.2.0.0";
+const wchar_t kMushroom[] = L"采蘑菇";
 const int kWidth = 800;
 const int kHeight = 600;
 const int kBottom = 490;
-const wchar_t kMushroom[] = L"采蘑菇";
 enum Grass { MUSHROOM, BOMB, NOTHING };
 enum Direction { LEFT, UP, RIGHT, DOWN };
 
@@ -33,7 +33,7 @@ class GrassNode {
 public:
     int id;
     int type;
-    int grass_style;
+    int style;
     int score;
     int x;
     int y;
@@ -133,7 +133,7 @@ void CreateGrayscaleBitmap(HDC hdc);
 void MRSetCursor(int focus);
 extern wchar_t temp_name[11]; extern int temp_num[6];
 
-void InitScene(IMAGE *images, HDC hdc[]);
+void InitGraphics(IMAGE *images, HDC hdc[]);
 void SaveGameToFile(Game &game, Player &player);
 bool LoadGameFromFile(Game &game, Player &player);
 void SleepMs(int ms);

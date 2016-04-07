@@ -133,7 +133,7 @@ void Game::SaveScoreToLeaderboard() {
     time_t now = time(nullptr);
     tm tstruct;
     localtime_s(&tstruct, &now);
-    wchar_t buffer[100];
+    wchar_t buffer[11];
     wcsftime(buffer, sizeof buffer / sizeof(wchar_t), L"%Y/%m/%d", &tstruct);
     fwprintf_s(fp, L"%s\t%d\t%s\n", player_name, score, buffer);
     fclose(fp);
@@ -142,7 +142,7 @@ void Game::SaveScoreToLeaderboard() {
 void Game::ExitGame(bool timeout) {
     switch (ShowExitGameDialog(score, timeout)) {
         case IDYES:
-            SaveScoreToLeaderboard();
+            SaveScoreToLeaderboard(); //fallthrough
         case IDNO:
             on_exit = 1;
             ClearGrass();

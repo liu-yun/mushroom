@@ -39,18 +39,20 @@ int CALLBACK LeaderboardDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 return 1;
             }
         case WM_NOTIFY:
-            NMLVDISPINFO* p;
-            if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
-                p = (NMLVDISPINFO*)lParam;
-                p->item.pszText = data[p->item.iItem][p->item.iSubItem - 1];
-            }
-            if (((LPNMHDR)lParam)->code == LVN_COLUMNCLICK) {
-                static bool descending = false;
-                static int n = ListView_GetItemCount(GetDlgItem(hDlg, IDC_LISTVIEW1));
-                LPNMLISTVIEW pl = (LPNMLISTVIEW)lParam;
-                SortData(data, n, pl->iSubItem - 1, !descending);
-                descending = !descending;
-                ListView_RedrawItems(GetDlgItem(hDlg, IDC_LISTVIEW1), 0, n);
+            switch (((LPNMHDR)lParam)->code) {
+                case LVN_GETDISPINFO:
+                    NMLVDISPINFO* p;
+                    p = (NMLVDISPINFO*)lParam;
+                    p->item.pszText = data[p->item.iItem][p->item.iSubItem - 1];
+                    break;
+                case LVN_COLUMNCLICK:
+                    static bool descending = false;
+                    static int n = ListView_GetItemCount(GetDlgItem(hDlg, IDC_LISTVIEW1));
+                    LPNMLISTVIEW pl = (LPNMLISTVIEW)lParam;
+                    SortData(data, n, pl->iSubItem - 1, !descending);
+                    descending = !descending;
+                    ListView_RedrawItems(GetDlgItem(hDlg, IDC_LISTVIEW1), 0, n);
+                    break;
             }
             return 1;
     }
@@ -103,17 +105,17 @@ bool OnInitInputDialog(HWND hDlg) {
     SendMessage(hTrack, TBM_SETBUDDY, 1, (LPARAM)GetDlgItem(hDlg, IDC_STATIC1));
     SendMessage(hTrack, TBM_SETBUDDY, 0, (LPARAM)GetDlgItem(hDlg, IDC_STATIC2));
 
-    const int skin_icons[] = { IDI_MUSHROOM,  IDI_MUSHROOM };
-    int skin_num = _countof(skin_icons);
+    const int kSkinIcons[] = { IDI_MUSHROOM,  IDI_MUSHROOM };
+    const int kSkinNum = _countof(kSkinIcons);
+    wchar_t kSkinNames[2][10] = { L"Ball",L"Umaru" };
     HWND hComboEx = CreateWindowEx(0, WC_COMBOBOXEX, nullptr,
         CBS_DROPDOWNLIST | WS_CHILD | WS_TABSTOP | WS_VISIBLE,
         120, 230, 100, 90, hDlg, (HMENU)IDC_COMBOBOXEX1, GetModuleHandle(nullptr), nullptr);
-    HIMAGELIST hImageList = ImageList_Create(16, 16, ILC_MASK | ILC_COLOR32, skin_num, 0);
-    for (int i = 0; i < skin_num; i++)
-        ImageList_AddIcon(hImageList, LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(skin_icons[i])));
+    HIMAGELIST hImageList = ImageList_Create(16, 16, ILC_MASK | ILC_COLOR32, kSkinNum, 0);
+    for (int i = 0; i < kSkinNum; i++)
+        ImageList_AddIcon(hImageList, LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(kSkinIcons[i])));
     SendMessage(hComboEx, CBEM_SETIMAGELIST, 0, (LPARAM)hImageList);
-    wchar_t kSkinNames[2][10] = { L"Ball",L"Umaru" };
-    for (int i = 0; i < skin_num; i++) {
+    for (int i = 0; i < kSkinNum; i++) {
         COMBOBOXEXITEM item = { 0 };
         item.mask = CBEIF_TEXT | CBEIF_IMAGE | CBEIF_SELECTEDIMAGE;
         item.iItem = i;
@@ -124,7 +126,6 @@ bool OnInitInputDialog(HWND hDlg) {
     }
     SendMessage(hComboEx, CB_SETCURSEL, 0, 0);
     SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)hImageList);
-
     return true;
 }
 

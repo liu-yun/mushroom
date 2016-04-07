@@ -37,9 +37,7 @@ bool InitNewGame(Game &game, Player &player) {
 }
 
 void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
-    //Info:Player name, Score, Time Center point X, Y
     const int kTextsXY[3][2] = { { 433,537 },{ 573,537 },{ 715,537 } };
-    //Buttons:Start, Save, Clear, Quit X, Y
     const int kButtonsXY[4][2] = { { 14,505 },{ 94,505 },{ 174,505 },{ 254,505 } };
     const int kButtons[6][4] = { { 487,246,80,80 },{ 1,327,80,80 },{ 406,246,80,80 },{ 325,246,80,80 },{ 244,246,80,80 },{ 568,246,80,80 } };
     const int kPlayer[8][4] = { { 34,1,32,32 },{ 100,1,32,32 },{ 1,1,32,32 },{ 67,1,32,32 },{ 565,165,67,80 },{ 503,165,61,80 },{ 95,246,67,80 },{ 163,246,80,80 } };
@@ -50,7 +48,6 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
     const int kGrassX[4] = { 100,300,500,700 };
     const int kGrassY[3] = { 81,243,405 };
     wchar_t buffer[11];
-
     BeginBatchDraw();
     //draw background
     BitBlt(hdc[0], 0, 0, kWidth, kHeight, hdc[2], 0, 0, SRCCOPY);
@@ -60,7 +57,7 @@ void DrawGameGraphic(HDC hdc[], Game &game, Player &player) {
         while (p) {
             MRTransparentBlt(hdc[0], kGrassX[p->x], kGrassY[p->y], hdc[1],
                 game.grass_focus && p->id == game.grass_focus->id ?
-                kGrassHighlight[p->grass_style] : kGrass[p->grass_style]);
+                kGrassHighlight[p->style] : kGrass[p->style]);
             if (p->picked) {
                 switch (p->type) {
                     case MUSHROOM:

@@ -5,16 +5,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     HDC hdc[5];
     Game game;
     Player player;
-    InitScene(images, hdc);
+    InitGraphics(images, hdc);
     GameMenu(game, player, hdc);
     return 0;
 }
 
-void InitScene(IMAGE *images, HDC hdc[]) {
+void InitGraphics(IMAGE *images, HDC hdc[]) {
     initgraph(kWidth, kHeight);
     SetWindowText(GetHWnd(), L"采蘑菇 刘云 15071018");
-    //Fix the blurry taskbar icon.
-    HICON icon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_MUSHROOM));
+    HICON icon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_MUSHROOM)); //Fix the blurry taskbar icon.
     SendMessage(GetHWnd(), WM_SETICON, ICON_BIG, (LPARAM)icon);
     DestroyIcon(icon);
 
@@ -49,7 +48,7 @@ void SaveGameToFile(Game &game, Player &player) {
     fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", player.skin, player.x, player.y, player.dx, player.dy, player.speed, player.direction);
     GrassNode *p = game.h->next;
     for (int i = 0; i < game.grass_num; i++) {
-        fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p->id, p->type, p->grass_style, p->score, p->x, p->y, p->picked,p->exploded);
+        fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p->id, p->type, p->style, p->score, p->x, p->y, p->picked,p->exploded);
         p = p->next;
     }
     fclose(fp);
@@ -71,7 +70,7 @@ bool LoadGameFromFile(Game &game, Player &player) {
     int temp_bool[2]; //C4477
     for (int i = 0; i < game.grass_num; i++) {
         s = new GrassNode(i);
-        fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &p->id, &p->type, &p->grass_style, &p->score, &p->x, &p->y, &temp_bool[0], &temp_bool[1]);
+        fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &p->id, &p->type, &p->style, &p->score, &p->x, &p->y, &temp_bool[0], &temp_bool[1]);
         p->picked = temp_bool[0] != 0;
         p->exploded = temp_bool[1] != 0;
         GrassNode::grid[p->y][p->x] = 1;
