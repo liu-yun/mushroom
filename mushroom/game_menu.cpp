@@ -38,14 +38,10 @@ void GetAndDispatchMenuCommand(Game &game, Player &player, HDC hdc[]) {
                 game.button_on_click = false;
                 switch (game.button_focus) {
                     case 0:
-                        game.on_exit = false;
-                        game.button_focus = -1;
                         if (InitNewGame(game, player))
                             GameMain(game, player, hdc);
                         break;
                     case 1:
-                        game.on_exit = false;
-                        game.button_focus = -1;
                         if (LoadGameFromFile(game, player))
                             GameMain(game, player, hdc);
                         break;

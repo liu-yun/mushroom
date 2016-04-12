@@ -28,11 +28,9 @@ bool InitNewGame(Game &game, Player &player) {
     player.speed = temp_num[4];
     player.skin = temp_num[5];
     player.Reset();
-    game.InitGrass();
-    game.score = 0;
     game.HandleReturnKey();
-    game.paused = true;
-    game.grayscale_ready = false;
+    game.Reset();
+    game.InitGrass();
     return true;
 }
 

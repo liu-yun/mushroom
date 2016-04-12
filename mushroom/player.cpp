@@ -2,10 +2,8 @@
 
 Player::Player() {
     skin = 0;
-    x = kWidth / 2 - kPlayerSize[skin];
-    y = kBottom - kPlayerSize[skin] - 1;
-    speed = 2;
-    SetDirection(UP);
+    speed = 1;
+    Reset();
 }
 
 void Player::Move() {

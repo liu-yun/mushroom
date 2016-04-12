@@ -48,7 +48,7 @@ void SaveGameToFile(Game &game, Player &player) {
     fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", player.skin, player.x, player.y, player.dx, player.dy, player.speed, player.direction);
     GrassNode *p = game.h->next;
     for (int i = 0; i < game.grass_num; i++) {
-        fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p->id, p->type, p->style, p->score, p->x, p->y, p->picked,p->exploded);
+        fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p->id, p->type, p->style, p->score, p->x, p->y, p->picked, p->exploded);
         p = p->next;
     }
     fclose(fp);
@@ -61,10 +61,9 @@ bool LoadGameFromFile(Game &game, Player &player) {
     FILE *fp = GetFilePtr(0, nullptr);
     if (!fp)
         return false;
+    game.Reset();
     fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, sizeof game.player_name / sizeof(wchar_t), &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);
     fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &player.skin, &player.x, &player.y, &player.dx, &player.dy, &player.speed, &player.direction);
-    game.paused = true;
-    game.grayscale_ready = false;
     game.h = new GrassNode(-1);
     GrassNode *p = game.h, *s;
     int temp_bool[2]; //C4477

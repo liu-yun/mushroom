@@ -2,7 +2,6 @@
 
 Game::Game() {
     time_left = 0;
-    score = 0;
     init_num = 5;
     num_at_a_time = 1;
     interval = 10;
@@ -10,11 +9,7 @@ Game::Game() {
     last_id = 0;
     h = nullptr;
     grass_focus = nullptr;
-    button_focus = -1;
-    button_on_click = false;
-    paused = true;
-    grayscale_ready = false;
-    on_exit = false;
+    Reset();
 }
 
 void Game::InitGrass() {
@@ -159,4 +154,13 @@ void Game::HandleReturnKey() {
         paused = !paused;
         grayscale_ready = false;
     }
+}
+
+void Game::Reset() {
+    score = 0;
+    button_focus = -1;
+    button_on_click = false;
+    paused = true;
+    grayscale_ready = false;
+    on_exit = false;
 }

@@ -29,8 +29,7 @@ const int kBottom = 490;
 enum Grass { MUSHROOM, BOMB, NOTHING };
 enum Direction { LEFT, UP, RIGHT, DOWN };
 
-class GrassNode {
-public:
+struct GrassNode {
     int id;
     int type;
     int style;
@@ -46,8 +45,7 @@ public:
     GrassNode(int i);
 };
 
-class Game {
-public:
+struct Game {
     wchar_t player_name[11];
     int time_left;
     int score;
@@ -75,6 +73,7 @@ public:
     void SaveScoreToLeaderboard();
     void ExitGame(bool timeout);
     void HandleReturnKey();
+    void Reset();
 };
 
 //dx = 0;  dy = -1; 上
@@ -82,8 +81,7 @@ public:
 //dx = -1; dy = 0;  左
 //dx = 1;  dy = 0;  右
 
-class Player {
-public:
+struct Player {
     const int kPlayerSize[2] = { 16,40 };
     int skin;
     int x;
