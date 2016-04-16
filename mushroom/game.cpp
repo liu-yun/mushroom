@@ -120,18 +120,18 @@ void Game::SaveScoreToLeaderboard() {
     GetModuleFileName(nullptr, path, sizeof path / sizeof(wchar_t));
     PathRemoveFileSpec(path);
     wcscat_s(path, L"\\leaderboard.txt");
-    FILE *fp;
-    if (_wfopen_s(&fp, path, L"at+, ccs=UTF-8") == 1) {
-        ErrorBox(L"fopen failed");
+    wfstream f;
+    f.open(path, ios_base::app);
+    if (!f.is_open())
         return;
-    }
+    f.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
     time_t now = time(nullptr);
     tm tstruct;
     localtime_s(&tstruct, &now);
     wchar_t buffer[11];
     wcsftime(buffer, sizeof buffer / sizeof(wchar_t), L"%Y/%m/%d", &tstruct);
-    fwprintf_s(fp, L"%s\t%d\t%s\n", player_name, score, buffer);
-    fclose(fp);
+    f << player_name << '\t' << score << '\t' << buffer << endl;
+    f.close();
 }
 
 void Game::ExitGame(bool timeout) {

@@ -41,42 +41,40 @@ void InitGraphics(IMAGE *images, HDC hdc[]) {
 void SaveGameToFile(Game &game, Player &player) {
     wchar_t filename[30];
     swprintf_s(filename, L"%s.mrs", game.player_name);
-    FILE *fp = GetFilePtr(1, filename);
-    if (!fp)
+    wchar_t t = '\t';
+    wfstream f = GetFileStream(1, filename);
+    if (!f.is_open())
         return;
-    fwprintf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", game.player_name, game.time_left, game.score, game.grass_num, game.num_at_a_time, game.interval, game.last_id);
-    fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", player.skin, player.x, player.y, player.dx, player.dy, player.speed, player.direction);
+    f << game.player_name << t << game.time_left << t << game.score << t << game.grass_num << t << game.num_at_a_time << t << game.interval << t << game.last_id << endl;
+    f << player.skin << t << player.x << t << player.y << t << player.dx << t << player.dy << t << player.speed << t << player.direction << endl;
     GrassNode *p = game.h->next;
     for (int i = 0; i < game.grass_num; i++) {
-        fwprintf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p->id, p->type, p->style, p->score, p->x, p->y, p->picked, p->exploded);
+        f << p->id << t << p->type << t << p->style << t << p->score << t << p->x << t << p->y << t << p->picked << t << p->exploded << endl;
         p = p->next;
     }
-    fclose(fp);
+    f.close();
     wchar_t buffer[40];
     swprintf_s(buffer, L"游戏已保存至 %s", filename);
     InfoBox(buffer);
 }
 
 bool LoadGameFromFile(Game &game, Player &player) {
-    FILE *fp = GetFilePtr(0, nullptr);
-    if (!fp)
+    wfstream f = GetFileStream(0, nullptr);
+    if (!f.is_open())
         return false;
     game.Reset();
-    fwscanf_s(fp, L"%s\t%d\t%d\t%d\t%d\t%d\t%d\n", &game.player_name, sizeof game.player_name / sizeof(wchar_t), &game.time_left, &game.score, &game.grass_num, &game.num_at_a_time, &game.interval, &game.last_id);
-    fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &player.skin, &player.x, &player.y, &player.dx, &player.dy, &player.speed, &player.direction);
+    f >> game.player_name >> game.time_left >> game.score >> game.grass_num >> game.num_at_a_time >> game.interval >> game.last_id;
+    f >> player.skin >> player.x >> player.y >> player.dx >> player.dy >> player.speed >> player.direction;
     game.h = new GrassNode(-1);
     GrassNode *p = game.h, *s;
-    int temp_bool[2]; //C4477
     for (int i = 0; i < game.grass_num; i++) {
         s = new GrassNode(i);
-        fwscanf_s(fp, L"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", &p->id, &p->type, &p->style, &p->score, &p->x, &p->y, &temp_bool[0], &temp_bool[1]);
-        p->picked = temp_bool[0] != 0;
-        p->exploded = temp_bool[1] != 0;
+        f >> p->id >> p->type >> p->style >> p->score >> p->x >> p->y >> p->picked >> p->exploded;
         GrassNode::grid[p->y][p->x] = 1;
         p->next = s;
         p = p->next;
     }
-    fclose(fp);
+    f.close();
     return true;
 }
 

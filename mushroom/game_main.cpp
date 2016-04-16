@@ -19,7 +19,7 @@ bool InitNewGame(Game &game, Player &player) {
     if (DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_INPUTDIALOG), GetHWnd(), InputDialog) == IDCANCEL)
         return false;
     srand(clock());
-    wchar_t emoji[3] = { (wchar_t)55357,(wchar_t)(56832 + rand() % 80),(wchar_t)0 }; //Unicode U+1F600-U+1F64F
+    wchar_t emoji[3] = { (wchar_t)55357,(wchar_t)(56832 + rand() % 80),'\0' }; //Unicode U+1F600-U+1F64F
     wcscpy_s(game.player_name, temp_name[0] ? temp_name : emoji);
     game.time_left = temp_num[0];
     game.init_num = temp_num[1];

@@ -157,22 +157,23 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
     GetModuleFileName(nullptr, path, sizeof path / sizeof(wchar_t));
     PathRemoveFileSpec(path);
     wcscat_s(path, L"\\leaderboard.txt");
-    FILE *fp;
-    if (_wfopen_s(&fp, path, L"at+, ccs=UTF-8") == 1) {
-        ErrorBox(L"fopen failed");
-    }
+    wfstream f;
+    f.open(path, ios_base::in);
+    if (!f.is_open())
+        return false;
+    f.imbue(locale(locale(), new codecvt_utf8<wchar_t>));
     LVITEM item;
     item.mask = LVIF_TEXT | LVIF_STATE;
     item.stateMask = 0;
     item.iSubItem = 0;
     item.state = 0;
-    for (int i = 0; !feof(fp) && i < 50; i++) {
-        fwscanf_s(fp, L"%s\t%s\t%s\n", &data[i][0], sizeof data[i][0] / sizeof(wchar_t), &data[i][1], sizeof data[i][1] / sizeof(wchar_t), &data[i][2], sizeof data[i][2] / sizeof(wchar_t));
+    for (int i = 0; !f.eof() && i < 50; i++) {
+        f >> data[i][0] >> data[i][1] >> data[i][2];
         item.pszText = L"";
         item.iItem = i;
         ListView_InsertItem(hListview, &item);
     }
-    fclose(fp);
+    f.close();
     return true;
 }
 
@@ -218,7 +219,7 @@ void ShowHelpDialog() {
     TaskDialogIndirect(&config, nullptr, nullptr, nullptr);
 }
 
-FILE *GetFilePtr(int mode, wchar_t* filename) {
+wfstream GetFileStream(int mode, wchar_t* filename) {
     wchar_t filepath[260] = { 0 };
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof ofn);
@@ -234,13 +235,13 @@ FILE *GetFilePtr(int mode, wchar_t* filename) {
         ofn.lpstrFileTitle = filename;
         ofn.nMaxFileTitle = 30;
     }
-    FILE *fp = nullptr;
+    wfstream f;
     switch (mode) {
         case 0:
             ofn.Flags |= OFN_FILEMUSTEXIST;
             ofn.lpstrTitle = L"载入游戏";
             if (GetOpenFileName(&ofn) == 1) {
-                _wfopen_s(&fp, filepath, L"rt+, ccs=UTF-8");
+                f.open(filepath, ios_base::in);
             }
             break;
         case 1:
@@ -248,11 +249,12 @@ FILE *GetFilePtr(int mode, wchar_t* filename) {
             ofn.lpstrDefExt = L"mrs";
             ofn.lpstrTitle = L"保存游戏";
             if (GetSaveFileName(&ofn) == 1) {
-                _wfopen_s(&fp, filepath, L"wt+, ccs=UTF-8");
+                f.open(filepath, ios_base::out);
             }
             break;
     }
-    return fp;
+    f.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
+    return f;
 }
 
 void CreateGrayscaleBitmap(HDC hdc) {
