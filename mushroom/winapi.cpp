@@ -171,7 +171,8 @@ bool OnInitLeaderboardDialog(HWND hDlg, wchar_t data[50][3][11]) {
         f >> data[i][0] >> data[i][1] >> data[i][2];
         item.pszText = L"";
         item.iItem = i;
-        ListView_InsertItem(hListview, &item);
+        if (data[i][0][0])
+            ListView_InsertItem(hListview, &item);
     }
     f.close();
     return true;
