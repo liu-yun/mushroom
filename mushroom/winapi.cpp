@@ -202,19 +202,17 @@ int ShowExitGameDialog(int score, bool timeout) {
 void ShowHelpDialog() {
     wchar_t buffer[30], copyright[110];
     mbstowcs_s(nullptr, buffer, __DATE__ " " __TIME__, sizeof buffer / sizeof(wchar_t));
-    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n© 2016 刘云 15071018 保留所有权利。\nPhoto credits © 2016 iStockphoto", kVersion, buffer, kBuildType);
+    swprintf_s(copyright, sizeof copyright / sizeof(wchar_t), L"版本 %s (%s) %s\n© 2016 刘云 15071018", kVersion, buffer, kBuildType);
     TASKDIALOGCONFIG config = { 0 };
     config.cbSize = sizeof config;
     config.hInstance = GetModuleHandle(nullptr);
     config.hwndParent = GetHWnd();
     config.dwCommonButtons = TDCBF_OK_BUTTON;
-    config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION /*| TDF_EXPAND_FOOTER_AREA*/;
+    config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION;
     config.pszWindowTitle = L"帮助";
     config.pszMainIcon = MAKEINTRESOURCE(IDI_MUSHROOM);
     config.pszMainInstruction = L"这是一个有趣的采蘑菇游戏！";
-    config.pszContent = L"使用 ↑↓←→ 或 WASD 键控制移动方向，按空格键尝试采蘑菇。\n采到蘑菇得分，采到炸弹减分。分数随机，范围在 1 到 9 之间。踩到炸弹后有 0.5 秒的躲避时间。\n点击清空按钮可将游戏区所有的草、蘑菇、炸弹清除。\n点击保存按钮可保存游戏状态。";
-    config.pszExpandedControlText = L"？？？";
-    config.pszExpandedInformation = L"？？？";
+    config.pszContent = L"使用 ↑↓←→ 或 WASD 键控制移动方向，按空格键尝试采蘑菇。\n采到蘑菇得分，采到炸弹减分。分数随机，范围在 1 到 9 之间。踩到炸弹后有 0.5 秒的躲避时间。\n点击清空按钮可将游戏区所有的草、蘑菇、炸弹清除。\n点击保存按钮保存游戏状态，可在主菜单重新载入。";
     config.pszFooterIcon = TD_INFORMATION_ICON;
     config.pszFooter = copyright;
     TaskDialogIndirect(&config, nullptr, nullptr, nullptr);

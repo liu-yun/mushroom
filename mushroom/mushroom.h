@@ -8,10 +8,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <Windows.h>
 #include <commctrl.h>
-#include <time.h>
-#include <stdio.h>
-#include <math.h>
 #include <Shlwapi.h>
+#include <time.h>
+#include <math.h>
 #include <fstream>
 #include <codecvt>
 
